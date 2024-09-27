@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>demo</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Demo_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Demo_files/libs/quarto-html/quarto.js"></script>
+<script src="Demo_files/libs/quarto-html/popper.min.js"></script>
+<script src="Demo_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Demo_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Demo_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Demo_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Demo_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Demo_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Demo_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="Demo_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
+<script src="Demo_files/libs/plotly-binding-4.10.3/plotly.js"></script>
+
+<script src="Demo_files/libs/typedarray-0.1/typedarray.min.js"></script>
+
+<script src="Demo_files/libs/jquery-3.5.1/jquery.min.js"></script>
+
+<link href="Demo_files/libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+
+<script src="Demo_files/libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+
+<link href="Demo_files/libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+
+<script src="Demo_files/libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content page-columns page-full" id="quarto-document-content">
+
+
+
+
+<p>This demo uses IPEDS data pulled from the Urban Institute API (). We will pull IPEDS directory and financial aid data sets and create plots based on a few fields. The data include land-grant universities.</p>
+<section id="load-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="load-libraries">Load Libraries</h2>
+<p>In this section I am going to show the code block, but notice I am hiding messages and warning. This will produce no output</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(educationdata)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hrbrthemes)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(viridis)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggridges)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="get-data" class="level2">
+<h2 class="anchored" data-anchor-id="get-data">Get Data</h2>
+<p>Here I display a feature that can be helpful for technical documents. The ability to show the code block. The key here is using the <code>code-fold</code> and <code>code-summary</code> options.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">####Urban Institute Data Pull</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>insts <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">100654</span>,<span class="dv">100858</span>,<span class="dv">102377</span>,<span class="dv">102614</span>,<span class="dv">104179</span>,<span class="dv">105297</span>,<span class="dv">106397</span>,<span class="dv">106412</span>,<span class="dv">110635</span>,<span class="dv">110644</span>,<span class="dv">110671</span>,<span class="dv">126818</span>,<span class="dv">129020</span>,<span class="dv">130934</span>,<span class="dv">130943</span>,<span class="dv">131399</span>,<span class="dv">133650</span>,<span class="dv">134130</span>,<span class="dv">139719</span>,<span class="dv">139959</span>,<span class="dv">141574</span>,<span class="dv">142285</span>,<span class="dv">145637</span>,<span class="dv">153603</span>,<span class="dv">155140</span>,<span class="dv">155399</span>,<span class="dv">157058</span>,<span class="dv">157085</span>,<span class="dv">159391</span>,<span class="dv">160621</span>,<span class="dv">161253</span>,<span class="dv">163286</span>,<span class="dv">163338</span>,<span class="dv">166629</span>,<span class="dv">171100</span>,<span class="dv">174066</span>,<span class="dv">175342</span>,<span class="dv">176080</span>,<span class="dv">177940</span>,<span class="dv">178396</span>,<span class="dv">180054</span>,<span class="dv">180160</span>,<span class="dv">180203</span>,<span class="dv">180212</span>,<span class="dv">180328</span>,<span class="dv">180461</span>,<span class="dv">180647</span>,<span class="dv">181419</span>,<span class="dv">181464</span>,<span class="dv">182290</span>,<span class="dv">183044</span>,<span class="dv">186380</span>,<span class="dv">187596</span>,<span class="dv">187745</span>,<span class="dv">188030</span>,<span class="dv">188216</span>,<span class="dv">190415</span>,<span class="dv">199102</span>,<span class="dv">199193</span>,<span class="dv">200086</span>,<span class="dv">200208</span>,<span class="dv">200332</span>,<span class="dv">200466</span>,<span class="dv">200527</span>,<span class="dv">200554</span>,<span class="dv">204796</span>,<span class="dv">207209</span>,<span class="dv">207388</span>,<span class="dv">209542</span>,<span class="dv">214777</span>,<span class="dv">217484</span>,<span class="dv">217882</span>,<span class="dv">218733</span>,<span class="dv">219277</span>,<span class="dv">219356</span>,<span class="dv">219374</span>,<span class="dv">219408</span>,<span class="dv">221759</span>,<span class="dv">221838</span>,<span class="dv">227526</span>,<span class="dv">228723</span>,<span class="dv">230728</span>,<span class="dv">231174</span>,<span class="dv">233921</span>,<span class="dv">234155</span>,<span class="dv">236939</span>,<span class="dv">237899</span>,<span class="dv">238032</span>,<span class="dv">240444</span>,<span class="dv">240727</span>,<span class="dv">240736</span>,<span class="dv">240754</span>,<span class="dv">240790</span>,<span class="dv">243197</span>,<span class="dv">243638</span>,<span class="dv">243665</span>,<span class="dv">243780</span>,<span class="dv">260372</span>,<span class="dv">366340</span>,<span class="dv">380359</span>,<span class="dv">380368</span>,<span class="dv">380377</span>,<span class="dv">413617</span>,<span class="dv">413626</span>,<span class="dv">434016</span>,<span class="dv">434584</span>,<span class="dv">434751</span>,<span class="dv">441070</span>,<span class="dv">442781</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>directory <span class="ot">&lt;-</span> <span class="fu">get_education_data</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">level =</span> <span class="st">"college-university"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">source =</span> <span class="st">"ipeds"</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">topic =</span> <span class="st">"directory"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">filters =</span> <span class="fu">list</span>(<span class="at">unitid =</span> insts,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">year =</span> <span class="dv">2017</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">msi =</span> <span class="fu">ifelse</span>(hbcu <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> tribal_college <span class="sc">==</span> <span class="dv">1</span>, <span class="st">"MSI"</span>,<span class="st">"Not MSI"</span>)) <span class="sc">%&gt;%</span> <span class="co">#msi flag</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(unitid, year, opeid, inst_name, fips, inst_size, hbcu, tribal_college, offering_highest_degree, inst_system_flag, msi) <span class="co">#keep relevant fields</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#manually adding unitid since land_grant is not a filter and pulling everything would take longer</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>sfa <span class="ot">&lt;-</span> <span class="fu">get_education_data</span>(<span class="at">level =</span> <span class="st">"college-university"</span>,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">source =</span> <span class="st">"ipeds"</span>,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">topic =</span> <span class="st">"sfa-grants-and-net-price"</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">filters =</span> <span class="fu">list</span>(<span class="at">year =</span> <span class="dv">2017</span>, <span class="at">unitid =</span> insts)) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(unitid, year, type_of_aid, income_level, average_grant, total_grant, net_price, number_of_students, number_receiving_grants) <span class="co">#keep relevant fields</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="making-a-simple-plot" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="making-a-simple-plot">Making a simple plot</h2>
+<p>In this section I am doing data manipulation and creating a plot. I will hide the code block on the output by adding <code>echo=FALSE</code>. Let’s try moving the figure to the margin by adding <code>#| column: margin</code></p>
+<div class="cell page-columns page-full">
+
+<div class="no-row-height column-margin column-container"><div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Demo_files/figure-html/plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div></div></div>
+</section>
+<section id="interactive-plots-in-html-files" class="level2">
+<h2 class="anchored" data-anchor-id="interactive-plots-in-html-files">Interactive plots in HTML Files</h2>
+<p>This section displays the ‘same’ plot but using different packages. One plot is interactive while the other is static. Interactive plots can be more difficult to format.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Demo_files/figure-html/static-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-7bc31a17b739f3a71b3e" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-7bc31a17b739f3a71b3e">{"x":{"visdat":{"144cc127d74ac":["function () ","plotlyVisDat"]},"cur_data":"144cc127d74ac","attrs":{"144cc127d74ac":{"mode":"markers","x":{},"y":{},"text":{},"color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"},"144cc127d74ac.1":{"mode":"lines","x":{},"y":[8179.2953984704327,7061.480938113069,3389.540888193118,9250.4948188844355,9045.1046936537005,9582.4790881225927,8758.0790923807963,9165.0733497504552,9563.5491226635422,9188.2625574377998,9617.0262750853672,8429.8808162344503,8677.1534900433417,8564.5201955619705,9006.5348890308778,7665.346836256912,8286.4863278821176,10662.906866698091,8279.387590834971,9331.6570457901289,8771.3300682021327,8741.0421234676469,9875.4203036014515,9147.5631317008301,10841.79504028615,8087.4850659938129,9355.0828780457086,8291.4554438151172,9618.9192716312718,7774.9040113511855,8549.6128477629645,9578.4564704625427,7681.4373068971072,8504.1809306612358,9941.4385581399019,9647.5508443880899,8202.7212307258033,8004.4298425422139,9333.0767931995579,8334.7577398027042,9548.4051502962939,10496.323170658419,10377.064388266379,11222.76059514961,9684.9375261697205,7962.3106693958189,9764.443381097748,8205.3241009764242,8352.5045824205663,8893.4283454130309,7757.6304178697992,8601.6702527753641,10170.017891057978,8387.0517693833408,10057.857845713082,10469.111345311027,10035.6151362987,9661.5116939141426,9397.6753003285794,10136.180577799918,9938.5990633210422,8877.3378747728348,10907.103421119888,9918.4859750207979,10666.692859789902,9353.1898814998003,8324.8195079367015,9261.3795490233915,8012.2384532940732,6394.4362802496817,8265.8999904453958,8359.6033194677111,6618.7563709394708,11778.828330509317,7772.5377656688042,8513.1726642542872,9912.0971116783676,8981.9259339341079,9316.513073422886,9112.3060710333411,8788.3670371152839,8890.3522260259342,8423.9652020284957,8532.3392542815782,8050.8082579168959,9337.099410859606,8608.2957406860332,9337.8092845643205,10178.299750946313,9418.4982623335382,10851.496647583916,9791.1819573086614,10978.800665296054,9648.2607180928044,10418.946936844535,8994.2304114824929,10317.908246206836,10924.140390033035,9929.6073297279927,10417.053940298629,9414.712269241727,10060.933965100179,9950.903540869429,9295.9267359861642,9703.6308670605376,9601.8823027181224,8727.7911476463105,10280.99481356168,10070.872196966182,8159.6555593064559,6605.0321459816569,2944.6866999053527,9285.5152549836839,8791.2065319341418,9230.1451060159525,8326.0026307778917,8989.2612955494915,9161.9972303633622,8974.3539477504892,9292.6139920308306,8363.6259371277611,8105.4685331799137,8542.9873598522972,8867.399642906832,7453.3312231155087,7937.7017142990489,10794.233502070278,7994.728235244449,8719.2726631897349,8491.1665794081364,8565.7033184031607,9021.9154859663595,9001.3291485296377,10714.727647142252,7941.0144582543835,9578.2198458943058,8040.8700260508931,8369.7781759019526,7551.5304189343506,8230.6429297779086,8540.3844896016781,7331.2329459046105,8194.4393708374664,7978.1645154677763,9361.2351168199002,7838.0827710707781,7979.1110137407295,9064.9811573857078,8095.7669258821479,9462.9836811623136,10510.757269320946,10232.486777072854,10874.212606134781,9635.0097422714662,7797.6199699020508,9726.8200747478786,8128.6577408672547,8127.7112425943023,8620.8368428026552,7646.18024622962,8231.826052619097,10140.203195459966,8315.3545252071744,9852.4677204823474,10483.782068541794,9829.7517619314895,9331.4204212218901,9073.9728909787573,11293.747965621062,9642.3451038868498,8649.9416646959507,10878.471848363068,10224.678166320995,10546.960828261386,9133.3656576065387,8500.1583130011877,8969.6214563857229,7782.9492466712836,6145.7438590313623,7754.0810493462259,8106.8882805893427,6280.1466137906446,11567.049341936152,7587.9706024430288,8785.2909177281872,10121.273230000912,7869.0805895099793,9185.896311755414,8666.5053844726226,8345.879094509899,8898.6340859142711,8141.6720921203541,8171.7234122866021,7839.2658939119692,8968.4383335445309,8365.7555582419045,8978.6131899787742,9672.1597994848598,8986.6584252988723,10822.391825690622,9266.8219140928686,10913.728909030557,9281.256012755397,10444.26576564602,8989.2612955494915,10301.81777556664,11000.096876437488,9933.3933228198039,10325.243607822218,9219.2603758769947,9922.2719681126091,9083.4378737082843,9192.0485505296056,9739.1245522962636,8070.6847216489023,7773.9575130782332,10403.802964477292,7681.9105560335838,5998.3267530189805,2743.0825677664284,8639.5301836934705,7975.0883960806805,8949.2717435172399,7822.9387987035352,8186.6307600856071,8213.1327117282835,8178.822149333746,8576.3514239738797,7235.8732449046274,7155.8941408401242,8000.6438494504036,8357.7103229218064,7562.6517736415444,7185.2355873016568,10593.812492772546,7375.0084910286732,8029.0387976389839,7577.5591214405495,7909.3067661104687,7454.9875950931755,8175.746029946652,10495.140047817225,7385.8932211676292,8733.4701372840264,7104.3099849642022,7286.2742779393575,7069.5261734331907,7564.7813947556879,7408.8458042867314,7255.5130840683951,7332.1794441775637,6620.4127429171385,8398.8829977952482,7221.9123953785747,6923.0555656937613,8897.4509630730809,7599.5652062866993,9868.0849419860679,10096.664274904144,9225.4126146511881,11133.079883787341,9668.1371818248117,7034.978986470418,9717.8283411548273,7244.8649784976769,7374.06199275572,7918.535124271757,6757.41836792704,6798.8276673687205,9331.1837966536514,7899.8417833809417,9178.5609501400304,10435.037407484731,8236.0852948473839,8560.7342024701593,7996.147982653878,9371.6465978223805,8961.3395964973861,7742.0131963660797,10537.259220963622,9914.226732792511,10344.410197849511,7702.9701426067804,7504.678754423192,7907.650394132801,6704.8877137781656,5054.9045994533826,6876.2039011826037,7123.2399504232562,5777.0827817162881,11116.75278857891,6880.4631434108906,11239.324314926282,9876.8400510108804,5975.3741698998774,8418.2862123907798,7823.4120478400109,7037.1086075845615,8421.3623317778747,7490.7179048971393,7137.4374245175468,7222.6222690832892,7875.4694528524096,7748.6386842767488,8495.8990707729008,8009.6355830434532,8416.1565912766364,10950.169092539234,8836.1651998993948,10530.633733052953,8803.9842586190025,10295.192287655969,8099.55291897396,9474.3416604377453,10869.953363906494,9768.4659987577961,8600.9603790706497,9890.8009005369313,9005.1151416214489,9715.2254709042063,9839.453369229248,6981.0285849121137,5236.6322678603001,3165.2207975033302,8315.1179006389357,6766.883350656567,7052.9624536565188,8146.1679589168798,6551.0817444233526,7289.1137727582154,7016.2856455796009,5588.7296253987015,5595.5917378776094,7245.3382276341536,7145.246035269407,7661.7974677333386,6641.4723294903351,9680.2050348049579,6841.1834650833534,7450.255103728412,6994.2795607334519,7206.7684230113318,5831.0331832745915,7468.2385709145128,6748.8998834704653,8115.8800141823931,6250.8051673291111,6637.4497118302861,6796.4614216863392,6977.7158409567801,6148.819978418458,6679.3322604084424,5982.709531515261,5512.7731389942473,6838.8172194009721,6742.5110201280349,6602.6659002992747,8761.155211767893,6659.9290458129126,9369.9902258447128,6658.2726738352458,9419.4447606064914,6612.8407567335162,7260.4822000013974,5446.281635319322,5242.3112574980159,9281.7292618918727,8737.966004080552,6121.8447776393077,7755.0275476191791,6884.7223856391774,7367.4365048450509,9143.0672649043045,6466.8433981305634,6866.0290447483612,6927.0781833538113,6011.5777288403178,3755.3624706893347,5868.6564896244608,6646.9146945598131,5100.0998919868744,6512.275315232293,9627.2011315196069,5592.7522430587514,7542.3020607730614,6992.6231887557842,5506.6209002200558,7663.4538397110064,6642.8920768997641,5922.843515751003,6849.938574108166,6265.2392659916395,7370.5126242321467,7830.7474094553945,6333.6237662124713,7750.7683053908913,10854.572766971012,8772.5131910433247,10440.006523417733,8547.2466020805841,7769.6982708499454,7677.8879383735348,10221.602046933898,8408.1113559565383,9060.0120414527046,9714.9888463359694,8576.3514239738797,7410.9754254008749,4984.3904781184074,7827.9079146365366,6448.386681807986,6888.9816278674643,7705.0997637209248,4089.4763610416358,4331.0700452128103,4853.5370918826975,5302.8871469669884,4902.2817529397607,7164.8858744331746,6025.5385783663696,6584.4458085449351,6493.1087252050002,8161.3119312841227,6931.1008010138594,7422.0967801080697,6654.9599298799112,7002.7980451900257,4843.8354845849317,7092.4787565522938,6441.9978184655556,7620.1515437234202,5772.1136657832867,6561.4932254258329,6580.4231908848869,6620.8859920536142,5707.5151586542652,5938.6973618229604,4915.532728761098,5028.1660232424692,5617.3611981555205,6261.9265220363059,6533.3349018054905,8640.7133065346625,5884.2737111281804,6624.4353605771867,6225.7229630958645,7151.6348986118373,4452.2218241507553,4796.983820073774,8599.0673825247432,324.30623123582336,7559.339029686209,6203.2436291132381,7112.591844852539,5807.134101882536,7807.0849526315778,6537.5941440337774,5808.553849291965,3210.8893391732972,5291.0559185550792,6485.3001144531408,5489.5839313069073,6472.7590123365171,5512.2998898577716,7455.2242196614134,6543.7463828079699,5097.7336463044921,7504.2055052867154,5283.010683234982,5429.0080418379348,6421.6481055970717,5882.1440900140369,7350.1629113636645,7607.8470661750353,5665.3959855078701,7720.0071115199298,11312.914555648355,8082.5159500608115,7464.6892023909404,6605.0321459816569,8073.9974656042368,9714.9888463359694],"text":{},"color":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"showlegend":false,"xaxis":{"domain":[0,1],"automargin":true,"title":"net_price"},"yaxis":{"domain":[0,1],"automargin":true,"title":"average_grant"},"hovermode":"closest"},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"mode":"markers","x":[13893,18617,34135,9366,10234,7963,11447,9727,8043,9629,7817,12834,11789,12265,10397,16065,13440,3397,13470,9023,11391,11519,6725,9801,2641,14281,8924,13419,7809,15602,12328,7980,15997,12520,6446,7688,13794,14632,9017,13236,8107,4101,4605,1031,7530,14810,7194,13783,13161,10875,15675,12108,5480,13015,5954,4216,6048,7629,8744,5623,6458,10943,2365,6543,3381,8932,13278,9320,14599,21436,13527,13131,20488,-1319,15612,12482,6570,10501,9087,9950,11319,10888,12859,12401,14436,9000,12080,8997,5445,8656,2600,7081,2062,7685,4428,10449,4855,2293,6496,4436,8672,5941,6406,9174,7451,7881,11575,5011,5899],"y":[8596,12665,5248,9144,16478,3587,11303,7962,28696,25623,25026,14027,18898,10362,15187,6863,9276,17637,7341,17229,12557,9418,23357,10675,6436,9443,10051,15292,20730,7775,11219,17939,8379,17493,21748,18755,10172,9643,7675,13023,5421,5859,7390,7049,3031,5654,5600,6807,10775,10917,16794,17769,5402,7765,11931,4719,64253,10010,14856,10978,5440,9790,10132,6212,9184,17623,7151,14126,11244,14612,15491,16368,9207,10603,6997,6613,2704,20429,11061,13629,16995,7643,19966,13839,8145,16267,5317,12281,20052,11121,5450,6578,6673,6617,5725,6900,17575,9197,5180,7296,5666,4900,8310,8244,5532,10898,4031,5180,3806],"text":["Alabama A & M University <br>Income: Less than $30,000","Auburn University <br>Income: Less than $30,000","Tuskegee University <br>Income: Less than $30,000","University of Alaska Fairbanks <br>Income: Less than $30,000","University of Arizona <br>Income: Less than $30,000","Dine College <br>Income: Less than $30,000","University of Arkansas <br>Income: Less than $30,000","University of Arkansas at Pine Bluff <br>Income: Less than $30,000","University of California-Berkeley <br>Income: Less than $30,000","University of California-Davis <br>Income: Less than $30,000","University of California-Riverside <br>Income: Less than $30,000","Colorado State University-Fort Collins <br>Income: Less than $30,000","University of Connecticut <br>Income: Less than $30,000","Delaware State University <br>Income: Less than $30,000","University of Delaware <br>Income: Less than $30,000","University of the District of Columbia <br>Income: Less than $30,000","Florida Agricultural and Mechanical University <br>Income: Less than $30,000","University of Florida <br>Income: Less than $30,000","Fort Valley State University <br>Income: Less than $30,000","University of Georgia <br>Income: Less than $30,000","University of Hawaii at Manoa <br>Income: Less than $30,000","University of Idaho <br>Income: Less than $30,000","University of Illinois at Urbana-Champaign <br>Income: Less than $30,000","Iowa State University <br>Income: Less than $30,000","Haskell Indian Nations University <br>Income: Less than $30,000","Kansas State University <br>Income: Less than $30,000","Kentucky State University <br>Income: Less than $30,000","University of Kentucky <br>Income: Less than $30,000","Louisiana State University and Agricultural & Mechanical College <br>Income: Less than $30,000","Southern University and A & M College <br>Income: Less than $30,000","University of Maine <br>Income: Less than $30,000","University of Maryland-College Park <br>Income: Less than $30,000","University of Maryland Eastern Shore <br>Income: Less than $30,000","University of Massachusetts-Amherst <br>Income: Less than $30,000","Michigan State University <br>Income: Less than $30,000","University of Minnesota-Twin Cities <br>Income: Less than $30,000","Alcorn State University <br>Income: Less than $30,000","Mississippi State University <br>Income: Less than $30,000","Lincoln University <br>Income: Less than $30,000","University of Missouri-Columbia <br>Income: Less than $30,000","Blackfeet Community College <br>Income: Less than $30,000","Chief Dull Knife College <br>Income: Less than $30,000","Aaniiih Nakoda College <br>Income: Less than $30,000","Fort Peck Community College <br>Income: Less than $30,000","Little Big Horn College <br>Income: Less than $30,000","Montana State University <br>Income: Less than $30,000","Salish Kootenai College <br>Income: Less than $30,000","Nebraska Indian Community College <br>Income: Less than $30,000","University of Nebraska-Lincoln <br>Income: Less than $30,000","University of Nevada-Reno <br>Income: Less than $30,000","University of New Hampshire-Main Campus <br>Income: Less than $30,000","Rutgers University-New Brunswick <br>Income: Less than $30,000","Navajo Technical University <br>Income: Less than $30,000","Institute of American Indian and Alaska Native Culture and Arts Development <br>Income: Less than $30,000","New Mexico State University-Main Campus <br>Income: Less than $30,000","Southwestern Indian Polytechnic Institute <br>Income: Less than $30,000","Cornell University <br>Income: Less than $30,000","North Carolina A & T State University <br>Income: Less than $30,000","North Carolina State University at Raleigh <br>Income: Less than $30,000","Nueta Hidatsa Sahnish College <br>Income: Less than $30,000","Cankdeska Cikana Community College <br>Income: Less than $30,000","North Dakota State University-Main Campus <br>Income: Less than $30,000","Sitting Bull College <br>Income: Less than $30,000","Turtle Mountain Community College <br>Income: Less than $30,000","United Tribes Technical College <br>Income: Less than $30,000","Ohio State University-Main Campus <br>Income: Less than $30,000","Langston University <br>Income: Less than $30,000","Oklahoma State University-Main Campus <br>Income: Less than $30,000","Oregon State University <br>Income: Less than $30,000","Pennsylvania State University-Main Campus <br>Income: Less than $30,000","University of Rhode Island <br>Income: Less than $30,000","Clemson University <br>Income: Less than $30,000","South Carolina State University <br>Income: Less than $30,000","Oglala Lakota College <br>Income: Less than $30,000","South Dakota State University <br>Income: Less than $30,000","Sinte Gleska University <br>Income: Less than $30,000","Sisseton Wahpeton College <br>Income: Less than $30,000","The University of Tennessee-Knoxville <br>Income: Less than $30,000","Tennessee State University <br>Income: Less than $30,000","Prairie View A & M University <br>Income: Less than $30,000","Texas A & M University-College Station <br>Income: Less than $30,000","Utah State University <br>Income: Less than $30,000","University of Vermont <br>Income: Less than $30,000","Virginia Polytechnic Institute and State University <br>Income: Less than $30,000","Virginia State University <br>Income: Less than $30,000","Washington State University <br>Income: Less than $30,000","West Virginia State University <br>Income: Less than $30,000","West Virginia University <br>Income: Less than $30,000","University of Wisconsin-Madison <br>Income: Less than $30,000","University of Wyoming <br>Income: Less than $30,000","American Samoa Community College <br>Income: Less than $30,000","University of Guam <br>Income: Less than $30,000","Northern Marianas College <br>Income: Less than $30,000","University of Puerto Rico-Mayaguez <br>Income: Less than $30,000","College of Micronesia-FSM <br>Income: Less than $30,000","University of the Virgin Islands <br>Income: Less than $30,000","Purdue University-Main Campus <br>Income: Less than $30,000","Lac Courte Oreilles Ojibwa Community College <br>Income: Less than $30,000","Stone Child College <br>Income: Less than $30,000","Bay Mills Community College <br>Income: Less than $30,000","Fond du Lac Tribal and Community College <br>Income: Less than $30,000","Northwest Indian College <br>Income: Less than $30,000","College of Menominee Nation <br>Income: Less than $30,000","Leech Lake Tribal College <br>Income: Less than $30,000","Little Priest Tribal College <br>Income: Less than $30,000","Ilisagvik College <br>Income: Less than $30,000","White Earth Tribal and Community College <br>Income: Less than $30,000","Saginaw Chippewa Tribal College <br>Income: Less than $30,000","Tohono O'Odham Community College <br>Income: Less than $30,000"],"type":"scatter","name":"Less than $30,000","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"markers","x":[13976,20546,36015,9218,11307,9452,13273,10470,9740,10533,9188,13114,14205,12356,10985,16961,14914,2842,14673,11611,12575,12260,10332,10419,3178,14900,7981,14478,13088,16546,13676,12367,17477,13829,14743,8898,15335,14739,10150,14246,8468,4040,5216,2504,7741,15506,7353,14107,14111,12027,16146,13671,5606,13318,6822,4154,6918,9024,10112,731,7710,11904,2486,5249,3887,9861,12537,10553,15568,22487,15690,14199,21919,-424,16392,11332,5686,15204,9639,11834,13189,10853,14052,13925,15330,10558,13105,10515,7584,10481,2723,9297,2337,9236,4321,10470,4923,1972,6480,4824,9498,6527,10072,9613,7301,14352,15606,4492],"y":[8513,10736,3368,9292,15405,2098,9477,7219,26999,24719,23655,13747,16482,10271,14599,5967,7802,18192,6138,14641,11373,8677,19750,10057,5899,8824,10994,14233,15451,6831,9871,13552,6899,16184,13451,17545,8631,9536,6542,12013,5060,5920,6779,5576,2820,4958,5441,6483,9825,9765,16323,16206,5276,7462,11063,4781,63383,8615,13488,15870,4188,8829,10011,7506,8678,16694,7892,12893,10275,13561,13328,15300,7776,9708,6217,7763,3588,15726,10509,11745,15125,7678,18773,12315,7251,14709,4292,10763,17913,9296,5327,4362,6398,5066,5832,6879,17507,9518,5196,6908,4840,4314,4644,7805,5682,4427,0,5213],"text":["Alabama A & M University <br>Income: $30,001–$48,000","Auburn University <br>Income: $30,001–$48,000","Tuskegee University <br>Income: $30,001–$48,000","University of Alaska Fairbanks <br>Income: $30,001–$48,000","University of Arizona <br>Income: $30,001–$48,000","Dine College <br>Income: $30,001–$48,000","University of Arkansas <br>Income: $30,001–$48,000","University of Arkansas at Pine Bluff <br>Income: $30,001–$48,000","University of California-Berkeley <br>Income: $30,001–$48,000","University of California-Davis <br>Income: $30,001–$48,000","University of California-Riverside <br>Income: $30,001–$48,000","Colorado State University-Fort Collins <br>Income: $30,001–$48,000","University of Connecticut <br>Income: $30,001–$48,000","Delaware State University <br>Income: $30,001–$48,000","University of Delaware <br>Income: $30,001–$48,000","University of the District of Columbia <br>Income: $30,001–$48,000","Florida Agricultural and Mechanical University <br>Income: $30,001–$48,000","University of Florida <br>Income: $30,001–$48,000","Fort Valley State University <br>Income: $30,001–$48,000","University of Georgia <br>Income: $30,001–$48,000","University of Hawaii at Manoa <br>Income: $30,001–$48,000","University of Idaho <br>Income: $30,001–$48,000","University of Illinois at Urbana-Champaign <br>Income: $30,001–$48,000","Iowa State University <br>Income: $30,001–$48,000","Haskell Indian Nations University <br>Income: $30,001–$48,000","Kansas State University <br>Income: $30,001–$48,000","Kentucky State University <br>Income: $30,001–$48,000","University of Kentucky <br>Income: $30,001–$48,000","Louisiana State University and Agricultural & Mechanical College <br>Income: $30,001–$48,000","Southern University and A & M College <br>Income: $30,001–$48,000","University of Maine <br>Income: $30,001–$48,000","University of Maryland-College Park <br>Income: $30,001–$48,000","University of Maryland Eastern Shore <br>Income: $30,001–$48,000","University of Massachusetts-Amherst <br>Income: $30,001–$48,000","Michigan State University <br>Income: $30,001–$48,000","University of Minnesota-Twin Cities <br>Income: $30,001–$48,000","Alcorn State University <br>Income: $30,001–$48,000","Mississippi State University <br>Income: $30,001–$48,000","Lincoln University <br>Income: $30,001–$48,000","University of Missouri-Columbia <br>Income: $30,001–$48,000","Blackfeet Community College <br>Income: $30,001–$48,000","Chief Dull Knife College <br>Income: $30,001–$48,000","Aaniiih Nakoda College <br>Income: $30,001–$48,000","Fort Peck Community College <br>Income: $30,001–$48,000","Little Big Horn College <br>Income: $30,001–$48,000","Montana State University <br>Income: $30,001–$48,000","Salish Kootenai College <br>Income: $30,001–$48,000","Nebraska Indian Community College <br>Income: $30,001–$48,000","University of Nebraska-Lincoln <br>Income: $30,001–$48,000","University of Nevada-Reno <br>Income: $30,001–$48,000","University of New Hampshire-Main Campus <br>Income: $30,001–$48,000","Rutgers University-New Brunswick <br>Income: $30,001–$48,000","Navajo Technical University <br>Income: $30,001–$48,000","Institute of American Indian and Alaska Native Culture and Arts Development <br>Income: $30,001–$48,000","New Mexico State University-Main Campus <br>Income: $30,001–$48,000","Southwestern Indian Polytechnic Institute <br>Income: $30,001–$48,000","Cornell University <br>Income: $30,001–$48,000","North Carolina A & T State University <br>Income: $30,001–$48,000","North Carolina State University at Raleigh <br>Income: $30,001–$48,000","Nueta Hidatsa Sahnish College <br>Income: $30,001–$48,000","Cankdeska Cikana Community College <br>Income: $30,001–$48,000","North Dakota State University-Main Campus <br>Income: $30,001–$48,000","Sitting Bull College <br>Income: $30,001–$48,000","Turtle Mountain Community College <br>Income: $30,001–$48,000","United Tribes Technical College <br>Income: $30,001–$48,000","Ohio State University-Main Campus <br>Income: $30,001–$48,000","Langston University <br>Income: $30,001–$48,000","Oklahoma State University-Main Campus <br>Income: $30,001–$48,000","Oregon State University <br>Income: $30,001–$48,000","Pennsylvania State University-Main Campus <br>Income: $30,001–$48,000","University of Rhode Island <br>Income: $30,001–$48,000","Clemson University <br>Income: $30,001–$48,000","South Carolina State University <br>Income: $30,001–$48,000","Oglala Lakota College <br>Income: $30,001–$48,000","South Dakota State University <br>Income: $30,001–$48,000","Sinte Gleska University <br>Income: $30,001–$48,000","Sisseton Wahpeton College <br>Income: $30,001–$48,000","The University of Tennessee-Knoxville <br>Income: $30,001–$48,000","Tennessee State University <br>Income: $30,001–$48,000","Prairie View A & M University <br>Income: $30,001–$48,000","Texas A & M University-College Station <br>Income: $30,001–$48,000","Utah State University <br>Income: $30,001–$48,000","University of Vermont <br>Income: $30,001–$48,000","Virginia Polytechnic Institute and State University <br>Income: $30,001–$48,000","Virginia State University <br>Income: $30,001–$48,000","Washington State University <br>Income: $30,001–$48,000","West Virginia State University <br>Income: $30,001–$48,000","West Virginia University <br>Income: $30,001–$48,000","University of Wisconsin-Madison <br>Income: $30,001–$48,000","University of Wyoming <br>Income: $30,001–$48,000","American Samoa Community College <br>Income: $30,001–$48,000","University of Guam <br>Income: $30,001–$48,000","Northern Marianas College <br>Income: $30,001–$48,000","University of Puerto Rico-Mayaguez <br>Income: $30,001–$48,000","College of Micronesia-FSM <br>Income: $30,001–$48,000","University of the Virgin Islands <br>Income: $30,001–$48,000","Purdue University-Main Campus <br>Income: $30,001–$48,000","Lac Courte Oreilles Ojibwa Community College <br>Income: $30,001–$48,000","Stone Child College <br>Income: $30,001–$48,000","Bay Mills Community College <br>Income: $30,001–$48,000","Fond du Lac Tribal and Community College <br>Income: $30,001–$48,000","Northwest Indian College <br>Income: $30,001–$48,000","College of Menominee Nation <br>Income: $30,001–$48,000","Leech Lake Tribal College <br>Income: $30,001–$48,000","Little Priest Tribal College <br>Income: $30,001–$48,000","Ilisagvik College <br>Income: $30,001–$48,000","White Earth Tribal and Community College <br>Income: $30,001–$48,000","Tohono O'Odham Community College <br>Income: $30,001–$48,000"],"type":"scatter","name":"$30,001–$48,000","marker":{"color":"rgba(252,141,98,1)","line":{"color":"rgba(252,141,98,1)"}},"textfont":{"color":"rgba(252,141,98,1)"},"error_y":{"color":"rgba(252,141,98,1)"},"error_x":{"color":"rgba(252,141,98,1)"},"line":{"color":"rgba(252,141,98,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"markers","x":[15995,23110,36867,11948,14756,10639,15399,13862,13750,13895,12215,17880,18218,14648,13139,16499,18094,3689,17292,14528,16436,15034,16954,13908,4106,17246,11551,18436,17667,18583,16490,17149,17797,17473,20481,12965,17939,19202,10858,16343,6756,5790,9472,1410,7601,18729,7391,17842,17296,14995,19902,19727,9025,15074,9670,4360,13653,12281,14667,8854,10588,15741,3928,6561,4743,15906,16744,15041,20124,27097,19400,18356,24045,1479,19382,961,6719,23207,12883,15397,18720,12870,16803,18296,17936,15177,15713,12555,14610,12892,2183,11117,3956,11253,4951,14230,8420,2522,7177,12111,6660,10403,7402,6877],"y":[6494,8172,2516,6562,11956,911,7351,3827,22989,21357,20628,8981,12469,7979,12445,6429,4622,17345,3519,11724,7512,5903,13128,6568,4971,6478,7424,10275,10872,4794,7057,8770,6579,12540,7713,13478,6027,5073,5834,9916,6772,4170,2523,6670,2960,1735,5403,2748,6640,6797,12567,10150,1857,5706,8215,4575,56648,5358,8933,7747,1310,4992,8569,6194,7822,10649,3685,8405,5719,8951,9618,11143,5650,7805,3227,18134,2555,7723,7265,8182,9594,5661,16022,7944,4645,10090,1684,8723,10887,6885,5867,2542,4779,3049,5202,3119,14010,8968,4555,2227,4181,4313,5581,2828],"text":["Alabama A & M University <br>Income: $48,001–$75,000","Auburn University <br>Income: $48,001–$75,000","Tuskegee University <br>Income: $48,001–$75,000","University of Alaska Fairbanks <br>Income: $48,001–$75,000","University of Arizona <br>Income: $48,001–$75,000","Dine College <br>Income: $48,001–$75,000","University of Arkansas <br>Income: $48,001–$75,000","University of Arkansas at Pine Bluff <br>Income: $48,001–$75,000","University of California-Berkeley <br>Income: $48,001–$75,000","University of California-Davis <br>Income: $48,001–$75,000","University of California-Riverside <br>Income: $48,001–$75,000","Colorado State University-Fort Collins <br>Income: $48,001–$75,000","University of Connecticut <br>Income: $48,001–$75,000","Delaware State University <br>Income: $48,001–$75,000","University of Delaware <br>Income: $48,001–$75,000","University of the District of Columbia <br>Income: $48,001–$75,000","Florida Agricultural and Mechanical University <br>Income: $48,001–$75,000","University of Florida <br>Income: $48,001–$75,000","Fort Valley State University <br>Income: $48,001–$75,000","University of Georgia <br>Income: $48,001–$75,000","University of Hawaii at Manoa <br>Income: $48,001–$75,000","University of Idaho <br>Income: $48,001–$75,000","University of Illinois at Urbana-Champaign <br>Income: $48,001–$75,000","Iowa State University <br>Income: $48,001–$75,000","Haskell Indian Nations University <br>Income: $48,001–$75,000","Kansas State University <br>Income: $48,001–$75,000","Kentucky State University <br>Income: $48,001–$75,000","University of Kentucky <br>Income: $48,001–$75,000","Louisiana State University and Agricultural & Mechanical College <br>Income: $48,001–$75,000","Southern University and A & M College <br>Income: $48,001–$75,000","University of Maine <br>Income: $48,001–$75,000","University of Maryland-College Park <br>Income: $48,001–$75,000","University of Maryland Eastern Shore <br>Income: $48,001–$75,000","University of Massachusetts-Amherst <br>Income: $48,001–$75,000","Michigan State University <br>Income: $48,001–$75,000","University of Minnesota-Twin Cities <br>Income: $48,001–$75,000","Alcorn State University <br>Income: $48,001–$75,000","Mississippi State University <br>Income: $48,001–$75,000","Lincoln University <br>Income: $48,001–$75,000","University of Missouri-Columbia <br>Income: $48,001–$75,000","Blackfeet Community College <br>Income: $48,001–$75,000","Chief Dull Knife College <br>Income: $48,001–$75,000","Aaniiih Nakoda College <br>Income: $48,001–$75,000","Fort Peck Community College <br>Income: $48,001–$75,000","Little Big Horn College <br>Income: $48,001–$75,000","Montana State University <br>Income: $48,001–$75,000","Salish Kootenai College <br>Income: $48,001–$75,000","Nebraska Indian Community College <br>Income: $48,001–$75,000","University of Nebraska-Lincoln <br>Income: $48,001–$75,000","University of Nevada-Reno <br>Income: $48,001–$75,000","University of New Hampshire-Main Campus <br>Income: $48,001–$75,000","Rutgers University-New Brunswick <br>Income: $48,001–$75,000","Navajo Technical University <br>Income: $48,001–$75,000","Institute of American Indian and Alaska Native Culture and Arts Development <br>Income: $48,001–$75,000","New Mexico State University-Main Campus <br>Income: $48,001–$75,000","Southwestern Indian Polytechnic Institute <br>Income: $48,001–$75,000","Cornell University <br>Income: $48,001–$75,000","North Carolina A & T State University <br>Income: $48,001–$75,000","North Carolina State University at Raleigh <br>Income: $48,001–$75,000","Nueta Hidatsa Sahnish College <br>Income: $48,001–$75,000","Cankdeska Cikana Community College <br>Income: $48,001–$75,000","North Dakota State University-Main Campus <br>Income: $48,001–$75,000","Sitting Bull College <br>Income: $48,001–$75,000","Turtle Mountain Community College <br>Income: $48,001–$75,000","United Tribes Technical College <br>Income: $48,001–$75,000","Ohio State University-Main Campus <br>Income: $48,001–$75,000","Langston University <br>Income: $48,001–$75,000","Oklahoma State University-Main Campus <br>Income: $48,001–$75,000","Oregon State University <br>Income: $48,001–$75,000","Pennsylvania State University-Main Campus <br>Income: $48,001–$75,000","University of Rhode Island <br>Income: $48,001–$75,000","Clemson University <br>Income: $48,001–$75,000","South Carolina State University <br>Income: $48,001–$75,000","Oglala Lakota College <br>Income: $48,001–$75,000","South Dakota State University <br>Income: $48,001–$75,000","Sinte Gleska University <br>Income: $48,001–$75,000","Sisseton Wahpeton College <br>Income: $48,001–$75,000","The University of Tennessee-Knoxville <br>Income: $48,001–$75,000","Tennessee State University <br>Income: $48,001–$75,000","Prairie View A & M University <br>Income: $48,001–$75,000","Texas A & M University-College Station <br>Income: $48,001–$75,000","Utah State University <br>Income: $48,001–$75,000","University of Vermont <br>Income: $48,001–$75,000","Virginia Polytechnic Institute and State University <br>Income: $48,001–$75,000","Virginia State University <br>Income: $48,001–$75,000","Washington State University <br>Income: $48,001–$75,000","West Virginia State University <br>Income: $48,001–$75,000","West Virginia University <br>Income: $48,001–$75,000","University of Wisconsin-Madison <br>Income: $48,001–$75,000","University of Wyoming <br>Income: $48,001–$75,000","American Samoa Community College <br>Income: $48,001–$75,000","University of Guam <br>Income: $48,001–$75,000","Northern Marianas College <br>Income: $48,001–$75,000","University of Puerto Rico-Mayaguez <br>Income: $48,001–$75,000","College of Micronesia-FSM <br>Income: $48,001–$75,000","University of the Virgin Islands <br>Income: $48,001–$75,000","Purdue University-Main Campus <br>Income: $48,001–$75,000","Lac Courte Oreilles Ojibwa Community College <br>Income: $48,001–$75,000","Bay Mills Community College <br>Income: $48,001–$75,000","Fond du Lac Tribal and Community College <br>Income: $48,001–$75,000","Northwest Indian College <br>Income: $48,001–$75,000","College of Menominee Nation <br>Income: $48,001–$75,000","Little Priest Tribal College <br>Income: $48,001–$75,000","Tohono O'Odham Community College <br>Income: $48,001–$75,000"],"type":"scatter","name":"$48,001–$75,000","marker":{"color":"rgba(141,160,203,1)","line":{"color":"rgba(141,160,203,1)"}},"textfont":{"color":"rgba(141,160,203,1)"},"error_y":{"color":"rgba(141,160,203,1)"},"error_x":{"color":"rgba(141,160,203,1)"},"line":{"color":"rgba(141,160,203,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"markers","x":[18957,26329,35083,13319,19862,18653,14033,20774,17655,18808,24841,24812,17840,18263,16080,20392,7550,19548,16974,18901,18003,23817,16898,19938,14161,22043,20409,19737,18971,22474,20232,23176,25162,19558,19965,20556,11434,20314,8861,20321,8652,20513,17776,25443,26305,9234,11532,22588,15686,19364,17324,9820,21130,19443,19185,23054,32589,23658,20369,26906,20938,7774,24824,16585,18908,25188,16073,20386,23429,19511,21982,17311,15366,21693,15704,2587,11386,4339,12338,15624,16012,5262,12926,10171,7403,12215],"y":[3532,4953,4300,5191,6850,4097,3656,15965,17597,14035,2020,5875,4787,7321,6848,2324,13484,1263,9278,5047,2934,6265,3578,3786,4814,6668,8130,3640,4576,3445,4144,6837,3032,6885,4001,3719,5258,5945,1700,143,4142,3423,4016,7026,3572,1648,6353,47713,1953,4236,3409,2935,5425,986,4261,2789,3459,5360,9130,2789,1671,1500,6106,3563,4671,3126,2458,12439,2811,3070,3285,86,5912,3804,4073,5463,2273,4396,1964,1725,6418,6470,1412,670,7313,5203],"text":["Alabama A & M University <br>Income: $75,001–$110,000","Auburn University <br>Income: $75,001–$110,000","Tuskegee University <br>Income: $75,001–$110,000","University of Alaska Fairbanks <br>Income: $75,001–$110,000","University of Arizona <br>Income: $75,001–$110,000","University of Arkansas <br>Income: $75,001–$110,000","University of Arkansas at Pine Bluff <br>Income: $75,001–$110,000","University of California-Berkeley <br>Income: $75,001–$110,000","University of California-Davis <br>Income: $75,001–$110,000","University of California-Riverside <br>Income: $75,001–$110,000","Colorado State University-Fort Collins <br>Income: $75,001–$110,000","University of Connecticut <br>Income: $75,001–$110,000","Delaware State University <br>Income: $75,001–$110,000","University of Delaware <br>Income: $75,001–$110,000","University of the District of Columbia <br>Income: $75,001–$110,000","Florida Agricultural and Mechanical University <br>Income: $75,001–$110,000","University of Florida <br>Income: $75,001–$110,000","Fort Valley State University <br>Income: $75,001–$110,000","University of Georgia <br>Income: $75,001–$110,000","University of Hawaii at Manoa <br>Income: $75,001–$110,000","University of Idaho <br>Income: $75,001–$110,000","University of Illinois at Urbana-Champaign <br>Income: $75,001–$110,000","Iowa State University <br>Income: $75,001–$110,000","Kansas State University <br>Income: $75,001–$110,000","Kentucky State University <br>Income: $75,001–$110,000","University of Kentucky <br>Income: $75,001–$110,000","Louisiana State University and Agricultural & Mechanical College <br>Income: $75,001–$110,000","Southern University and A & M College <br>Income: $75,001–$110,000","University of Maine <br>Income: $75,001–$110,000","University of Maryland-College Park <br>Income: $75,001–$110,000","University of Maryland Eastern Shore <br>Income: $75,001–$110,000","University of Massachusetts-Amherst <br>Income: $75,001–$110,000","Michigan State University <br>Income: $75,001–$110,000","University of Minnesota-Twin Cities <br>Income: $75,001–$110,000","Alcorn State University <br>Income: $75,001–$110,000","Mississippi State University <br>Income: $75,001–$110,000","Lincoln University <br>Income: $75,001–$110,000","University of Missouri-Columbia <br>Income: $75,001–$110,000","Little Big Horn College <br>Income: $75,001–$110,000","Montana State University <br>Income: $75,001–$110,000","Salish Kootenai College <br>Income: $75,001–$110,000","University of Nebraska-Lincoln <br>Income: $75,001–$110,000","University of Nevada-Reno <br>Income: $75,001–$110,000","University of New Hampshire-Main Campus <br>Income: $75,001–$110,000","Rutgers University-New Brunswick <br>Income: $75,001–$110,000","Navajo Technical University <br>Income: $75,001–$110,000","New Mexico State University-Main Campus <br>Income: $75,001–$110,000","Cornell University <br>Income: $75,001–$110,000","North Carolina A & T State University <br>Income: $75,001–$110,000","North Carolina State University at Raleigh <br>Income: $75,001–$110,000","North Dakota State University-Main Campus <br>Income: $75,001–$110,000","Turtle Mountain Community College <br>Income: $75,001–$110,000","Ohio State University-Main Campus <br>Income: $75,001–$110,000","Langston University <br>Income: $75,001–$110,000","Oklahoma State University-Main Campus <br>Income: $75,001–$110,000","Oregon State University <br>Income: $75,001–$110,000","Pennsylvania State University-Main Campus <br>Income: $75,001–$110,000","University of Rhode Island <br>Income: $75,001–$110,000","Clemson University <br>Income: $75,001–$110,000","South Carolina State University <br>Income: $75,001–$110,000","South Dakota State University <br>Income: $75,001–$110,000","Sisseton Wahpeton College <br>Income: $75,001–$110,000","The University of Tennessee-Knoxville <br>Income: $75,001–$110,000","Tennessee State University <br>Income: $75,001–$110,000","Prairie View A & M University <br>Income: $75,001–$110,000","Texas A & M University-College Station <br>Income: $75,001–$110,000","Utah State University <br>Income: $75,001–$110,000","University of Vermont <br>Income: $75,001–$110,000","Virginia Polytechnic Institute and State University <br>Income: $75,001–$110,000","Virginia State University <br>Income: $75,001–$110,000","Washington State University <br>Income: $75,001–$110,000","West Virginia State University <br>Income: $75,001–$110,000","West Virginia University <br>Income: $75,001–$110,000","University of Wisconsin-Madison <br>Income: $75,001–$110,000","University of Wyoming <br>Income: $75,001–$110,000","American Samoa Community College <br>Income: $75,001–$110,000","University of Guam <br>Income: $75,001–$110,000","Northern Marianas College <br>Income: $75,001–$110,000","University of Puerto Rico-Mayaguez <br>Income: $75,001–$110,000","University of the Virgin Islands <br>Income: $75,001–$110,000","Purdue University-Main Campus <br>Income: $75,001–$110,000","Bay Mills Community College <br>Income: $75,001–$110,000","Fond du Lac Tribal and Community College <br>Income: $75,001–$110,000","Northwest Indian College <br>Income: $75,001–$110,000","College of Menominee Nation <br>Income: $75,001–$110,000","Leech Lake Tribal College <br>Income: $75,001–$110,000"],"type":"scatter","name":"$75,001–$110,000","marker":{"color":"rgba(231,138,195,1)","line":{"color":"rgba(231,138,195,1)"}},"textfont":{"color":"rgba(231,138,195,1)"},"error_y":{"color":"rgba(231,138,195,1)"},"error_x":{"color":"rgba(231,138,195,1)"},"line":{"color":"rgba(231,138,195,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"markers","x":[17140,27395,15378,21208,19346,15897,31177,30156,27948,26049,27742,18180,22995,20633,21019,13969,19168,17093,20335,18865,27989,18486,21235,16256,24066,20730,20650,20479,24339,23362,27686,27210,24720,21996,20849,11943,23592,20464,22149,18236,29644,28187,12119,47089,16513,22244,18401,23918,15466,20831,23912,34890,26099,21052,25260,21105,25164,16953,20805,26916,16746,26133,25516,21321,23601,17397,16308,24517,15834,650,14302,16913,20546,14338,7403],"y":[5349,3887,3132,5504,3404,1792,5562,5096,4895,812,2945,4447,2589,2295,1697,7065,1643,9159,3613,2072,2093,1990,2489,2719,4645,7809,2727,3068,1580,1014,2327,984,1723,1970,3426,4749,2667,0,1787,3556,2825,1690,5766,23212,1126,1356,2332,2637,4963,2615,1931,1158,2919,8447,4435,1504,5766,3195,2774,1398,1785,6692,724,1260,1666,0,4970,980,3943,7400,0,436,1884,0,7313],"text":["Alabama A & M University <br>Income: $110,001 or more","Auburn University <br>Income: $110,001 or more","University of Alaska Fairbanks <br>Income: $110,001 or more","University of Arizona <br>Income: $110,001 or more","University of Arkansas <br>Income: $110,001 or more","University of Arkansas at Pine Bluff <br>Income: $110,001 or more","University of California-Berkeley <br>Income: $110,001 or more","University of California-Davis <br>Income: $110,001 or more","University of California-Riverside <br>Income: $110,001 or more","Colorado State University-Fort Collins <br>Income: $110,001 or more","University of Connecticut <br>Income: $110,001 or more","Delaware State University <br>Income: $110,001 or more","University of Delaware <br>Income: $110,001 or more","University of the District of Columbia <br>Income: $110,001 or more","Florida Agricultural and Mechanical University <br>Income: $110,001 or more","University of Florida <br>Income: $110,001 or more","Fort Valley State University <br>Income: $110,001 or more","University of Georgia <br>Income: $110,001 or more","University of Hawaii at Manoa <br>Income: $110,001 or more","University of Idaho <br>Income: $110,001 or more","University of Illinois at Urbana-Champaign <br>Income: $110,001 or more","Iowa State University <br>Income: $110,001 or more","Kansas State University <br>Income: $110,001 or more","Kentucky State University <br>Income: $110,001 or more","University of Kentucky <br>Income: $110,001 or more","Louisiana State University and Agricultural & Mechanical College <br>Income: $110,001 or more","Southern University and A & M College <br>Income: $110,001 or more","University of Maine <br>Income: $110,001 or more","University of Maryland-College Park <br>Income: $110,001 or more","University of Maryland Eastern Shore <br>Income: $110,001 or more","University of Massachusetts-Amherst <br>Income: $110,001 or more","Michigan State University <br>Income: $110,001 or more","University of Minnesota-Twin Cities <br>Income: $110,001 or more","Alcorn State University <br>Income: $110,001 or more","Mississippi State University <br>Income: $110,001 or more","Lincoln University <br>Income: $110,001 or more","University of Missouri-Columbia <br>Income: $110,001 or more","Montana State University <br>Income: $110,001 or more","University of Nebraska-Lincoln <br>Income: $110,001 or more","University of Nevada-Reno <br>Income: $110,001 or more","University of New Hampshire-Main Campus <br>Income: $110,001 or more","Rutgers University-New Brunswick <br>Income: $110,001 or more","New Mexico State University-Main Campus <br>Income: $110,001 or more","Cornell University <br>Income: $110,001 or more","North Carolina A & T State University <br>Income: $110,001 or more","North Carolina State University at Raleigh <br>Income: $110,001 or more","North Dakota State University-Main Campus <br>Income: $110,001 or more","Ohio State University-Main Campus <br>Income: $110,001 or more","Langston University <br>Income: $110,001 or more","Oklahoma State University-Main Campus <br>Income: $110,001 or more","Oregon State University <br>Income: $110,001 or more","Pennsylvania State University-Main Campus <br>Income: $110,001 or more","University of Rhode Island <br>Income: $110,001 or more","Clemson University <br>Income: $110,001 or more","South Carolina State University <br>Income: $110,001 or more","South Dakota State University <br>Income: $110,001 or more","The University of Tennessee-Knoxville <br>Income: $110,001 or more","Tennessee State University <br>Income: $110,001 or more","Prairie View A & M University <br>Income: $110,001 or more","Texas A & M University-College Station <br>Income: $110,001 or more","Utah State University <br>Income: $110,001 or more","University of Vermont <br>Income: $110,001 or more","Virginia Polytechnic Institute and State University <br>Income: $110,001 or more","Virginia State University <br>Income: $110,001 or more","Washington State University <br>Income: $110,001 or more","West Virginia State University <br>Income: $110,001 or more","West Virginia University <br>Income: $110,001 or more","University of Wisconsin-Madison <br>Income: $110,001 or more","University of Wyoming <br>Income: $110,001 or more","American Samoa Community College <br>Income: $110,001 or more","University of Puerto Rico-Mayaguez <br>Income: $110,001 or more","University of the Virgin Islands <br>Income: $110,001 or more","Purdue University-Main Campus <br>Income: $110,001 or more","Fond du Lac Tribal and Community College <br>Income: $110,001 or more","College of Menominee Nation <br>Income: $110,001 or more"],"type":"scatter","name":"$110,001 or more","marker":{"color":"rgba(166,216,84,1)","line":{"color":"rgba(166,216,84,1)"}},"textfont":{"color":"rgba(166,216,84,1)"},"error_y":{"color":"rgba(166,216,84,1)"},"error_x":{"color":"rgba(166,216,84,1)"},"line":{"color":"rgba(166,216,84,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"lines","x":[-1319,1031,2062,2293,2365,2600,2641,3381,3397,4101,4216,4428,4436,4605,4855,5011,5445,5480,5623,5899,5941,5954,6048,6406,6446,6458,6496,6543,6570,6725,7081,7194,7451,7530,7629,7685,7688,7809,7817,7881,7963,7980,8043,8107,8656,8672,8744,8924,8932,8997,9000,9017,9023,9087,9174,9320,9366,9629,9727,9801,9950,10234,10397,10449,10501,10875,10888,10943,11319,11391,11447,11519,11575,11789,12080,12108,12265,12328,12401,12482,12520,12834,12859,13015,13131,13161,13236,13278,13419,13440,13470,13527,13783,13794,13893,14281,14436,14599,14632,14810,15602,15612,15675,15997,16065,18617,20488,21436,34135],"y":[11778.828330509317,11222.76059514961,10978.800665296054,10924.140390033035,10907.103421119888,10851.496647583916,10841.79504028615,10666.692859789902,10662.906866698091,10496.323170658419,10469.111345311027,10418.946936844535,10417.053940298629,10377.064388266379,10317.908246206836,10280.99481356168,10178.299750946313,10170.017891057978,10136.180577799918,10070.872196966182,10060.933965100179,10057.857845713082,10035.6151362987,9950.903540869429,9941.4385581399019,9938.5990633210422,9929.6073297279927,9918.4859750207979,9912.0971116783676,9875.4203036014515,9791.1819573086614,9764.443381097748,9703.6308670605376,9684.9375261697205,9661.5116939141426,9648.2607180928044,9647.5508443880899,9618.9192716312718,9617.0262750853672,9601.8823027181224,9582.4790881225927,9578.4564704625427,9563.5491226635422,9548.4051502962939,9418.4982623335382,9414.712269241727,9397.6753003285794,9355.0828780457086,9353.1898814998003,9337.8092845643205,9337.099410859606,9333.0767931995579,9331.6570457901289,9316.513073422886,9295.9267359861642,9261.3795490233915,9250.4948188844355,9188.2625574377998,9165.0733497504552,9147.5631317008301,9112.3060710333411,9045.1046936537005,9006.5348890308778,8994.2304114824929,8981.9259339341079,8893.4283454130309,8890.3522260259342,8877.3378747728348,8788.3670371152839,8771.3300682021327,8758.0790923807963,8741.0421234676469,8727.7911476463105,8677.1534900433417,8608.2957406860332,8601.6702527753641,8564.5201955619705,8549.6128477629645,8532.3392542815782,8513.1726642542872,8504.1809306612358,8429.8808162344503,8423.9652020284957,8387.0517693833408,8359.6033194677111,8352.5045824205663,8334.7577398027042,8324.8195079367015,8291.4554438151172,8286.4863278821176,8279.387590834971,8265.8999904453958,8205.3241009764242,8202.7212307258033,8179.2953984704327,8087.4850659938129,8050.8082579168959,8012.2384532940732,8004.4298425422139,7962.3106693958189,7774.9040113511855,7772.5377656688042,7757.6304178697992,7681.4373068971072,7665.346836256912,7061.480938113069,6618.7563709394708,6394.4362802496817,3389.540888193118],"text":["Oglala Lakota College <br>Income: Less than $30,000","Fort Peck Community College <br>Income: Less than $30,000","Northern Marianas College <br>Income: Less than $30,000","Lac Courte Oreilles Ojibwa Community College <br>Income: Less than $30,000","Sitting Bull College <br>Income: Less than $30,000","American Samoa Community College <br>Income: Less than $30,000","Haskell Indian Nations University <br>Income: Less than $30,000","United Tribes Technical College <br>Income: Less than $30,000","University of Florida <br>Income: Less than $30,000","Chief Dull Knife College <br>Income: Less than $30,000","Southwestern Indian Polytechnic Institute <br>Income: Less than $30,000","College of Micronesia-FSM <br>Income: Less than $30,000","Bay Mills Community College <br>Income: Less than $30,000","Aaniiih Nakoda College <br>Income: Less than $30,000","Purdue University-Main Campus <br>Income: Less than $30,000","Saginaw Chippewa Tribal College <br>Income: Less than $30,000","University of Wisconsin-Madison <br>Income: Less than $30,000","Navajo Technical University <br>Income: Less than $30,000","Nueta Hidatsa Sahnish College <br>Income: Less than $30,000","Tohono O'Odham Community College <br>Income: Less than $30,000","Northwest Indian College <br>Income: Less than $30,000","New Mexico State University-Main Campus <br>Income: Less than $30,000","Cornell University <br>Income: Less than $30,000","College of Menominee Nation <br>Income: Less than $30,000","Michigan State University <br>Income: Less than $30,000","Cankdeska Cikana Community College <br>Income: Less than $30,000","Stone Child College <br>Income: Less than $30,000","Turtle Mountain Community College <br>Income: Less than $30,000","Sisseton Wahpeton College <br>Income: Less than $30,000","University of Illinois at Urbana-Champaign <br>Income: Less than $30,000","University of Guam <br>Income: Less than $30,000","Salish Kootenai College <br>Income: Less than $30,000","Little Priest Tribal College <br>Income: Less than $30,000","Little Big Horn College <br>Income: Less than $30,000","North Carolina A & T State University <br>Income: Less than $30,000","University of Puerto Rico-Mayaguez <br>Income: Less than $30,000","University of Minnesota-Twin Cities <br>Income: Less than $30,000","Louisiana State University and Agricultural & Mechanical College <br>Income: Less than $30,000","University of California-Riverside <br>Income: Less than $30,000","Ilisagvik College <br>Income: Less than $30,000","Dine College <br>Income: Less than $30,000","University of Maryland-College Park <br>Income: Less than $30,000","University of California-Berkeley <br>Income: Less than $30,000","Blackfeet Community College <br>Income: Less than $30,000","University of Wyoming <br>Income: Less than $30,000","Fond du Lac Tribal and Community College <br>Income: Less than $30,000","North Carolina State University at Raleigh <br>Income: Less than $30,000","Kentucky State University <br>Income: Less than $30,000","Ohio State University-Main Campus <br>Income: Less than $30,000","West Virginia University <br>Income: Less than $30,000","Washington State University <br>Income: Less than $30,000","Lincoln University <br>Income: Less than $30,000","University of Georgia <br>Income: Less than $30,000","Tennessee State University <br>Income: Less than $30,000","Leech Lake Tribal College <br>Income: Less than $30,000","Oklahoma State University-Main Campus <br>Income: Less than $30,000","University of Alaska Fairbanks <br>Income: Less than $30,000","University of California-Davis <br>Income: Less than $30,000","University of Arkansas at Pine Bluff <br>Income: Less than $30,000","Iowa State University <br>Income: Less than $30,000","Prairie View A & M University <br>Income: Less than $30,000","University of Arizona <br>Income: Less than $30,000","University of Delaware <br>Income: Less than $30,000","University of the Virgin Islands <br>Income: Less than $30,000","The University of Tennessee-Knoxville <br>Income: Less than $30,000","University of Nevada-Reno <br>Income: Less than $30,000","Utah State University <br>Income: Less than $30,000","North Dakota State University-Main Campus <br>Income: Less than $30,000","Texas A & M University-College Station <br>Income: Less than $30,000","University of Hawaii at Manoa <br>Income: Less than $30,000","University of Arkansas <br>Income: Less than $30,000","University of Idaho <br>Income: Less than $30,000","White Earth Tribal and Community College <br>Income: Less than $30,000","University of Connecticut <br>Income: Less than $30,000","West Virginia State University <br>Income: Less than $30,000","Rutgers University-New Brunswick <br>Income: Less than $30,000","Delaware State University <br>Income: Less than $30,000","University of Maine <br>Income: Less than $30,000","Virginia Polytechnic Institute and State University <br>Income: Less than $30,000","Sinte Gleska University <br>Income: Less than $30,000","University of Massachusetts-Amherst <br>Income: Less than $30,000","Colorado State University-Fort Collins <br>Income: Less than $30,000","University of Vermont <br>Income: Less than $30,000","Institute of American Indian and Alaska Native Culture and Arts Development <br>Income: Less than $30,000","Clemson University <br>Income: Less than $30,000","University of Nebraska-Lincoln <br>Income: Less than $30,000","University of Missouri-Columbia <br>Income: Less than $30,000","Langston University <br>Income: Less than $30,000","University of Kentucky <br>Income: Less than $30,000","Florida Agricultural and Mechanical University <br>Income: Less than $30,000","Fort Valley State University <br>Income: Less than $30,000","University of Rhode Island <br>Income: Less than $30,000","Nebraska Indian Community College <br>Income: Less than $30,000","Alcorn State University <br>Income: Less than $30,000","Alabama A & M University <br>Income: Less than $30,000","Kansas State University <br>Income: Less than $30,000","Virginia State University <br>Income: Less than $30,000","Oregon State University <br>Income: Less than $30,000","Mississippi State University <br>Income: Less than $30,000","Montana State University <br>Income: Less than $30,000","Southern University and A & M College <br>Income: Less than $30,000","South Dakota State University <br>Income: Less than $30,000","University of New Hampshire-Main Campus <br>Income: Less than $30,000","University of Maryland Eastern Shore <br>Income: Less than $30,000","University of the District of Columbia <br>Income: Less than $30,000","Auburn University <br>Income: Less than $30,000","South Carolina State University <br>Income: Less than $30,000","Pennsylvania State University-Main Campus <br>Income: Less than $30,000","Tuskegee University <br>Income: Less than $30,000"],"type":"scatter","name":"Less than $30,000","marker":{"color":"rgba(102,194,165,1)","line":{"color":"rgba(102,194,165,1)"}},"textfont":{"color":"rgba(102,194,165,1)"},"error_y":{"color":"rgba(102,194,165,1)"},"error_x":{"color":"rgba(102,194,165,1)"},"line":{"color":"rgba(102,194,165,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"lines","x":[-424,731,1972,2337,2486,2504,2723,2842,3178,3887,4040,4154,4321,4492,4824,4923,5216,5249,5606,5686,6480,6527,6822,6918,7301,7353,7584,7710,7741,7981,8468,8898,9024,9188,9218,9236,9297,9452,9498,9613,9639,9740,9861,10072,10112,10150,10332,10419,10470,10470,10481,10515,10533,10553,10558,10853,10985,11307,11332,11611,11834,11904,12027,12260,12356,12367,12537,12575,13088,13105,13114,13189,13273,13318,13671,13676,13829,13925,13976,14052,14107,14111,14199,14205,14246,14352,14478,14673,14739,14743,14900,14914,15204,15330,15335,15506,15568,15606,15690,16146,16392,16546,16961,17477,20546,21919,22487,36015],"y":[11567.049341936152,11293.747965621062,11000.096876437488,10913.728909030557,10878.471848363068,10874.212606134781,10822.391825690622,10794.233502070278,10714.727647142252,10546.960828261386,10510.757269320946,10483.782068541794,10444.26576564602,10403.802964477292,10325.243607822218,10301.81777556664,10232.486777072854,10224.678166320995,10140.203195459966,10121.273230000912,9933.3933228198039,9922.2719681126091,9852.4677204823474,9829.7517619314895,9739.1245522962636,9726.8200747478786,9672.1597994848598,9642.3451038868498,9635.0097422714662,9578.2198458943058,9462.9836811623136,9361.2351168199002,9331.4204212218901,9292.6139920308306,9285.5152549836839,9281.256012755397,9266.8219140928686,9230.1451060159525,9219.2603758769947,9192.0485505296056,9185.896311755414,9161.9972303633622,9133.3656576065387,9083.4378737082843,9073.9728909787573,9064.9811573857078,9021.9154859663595,9001.3291485296377,8989.2612955494915,8989.2612955494915,8986.6584252988723,8978.6131899787742,8974.3539477504892,8969.6214563857229,8968.4383335445309,8898.6340859142711,8867.399642906832,8791.2065319341418,8785.2909177281872,8719.2726631897349,8666.5053844726226,8649.9416646959507,8620.8368428026552,8565.7033184031607,8542.9873598522972,8540.3844896016781,8500.1583130011877,8491.1665794081364,8369.7781759019526,8365.7555582419045,8363.6259371277611,8345.879094509899,8326.0026307778917,8315.3545252071744,8231.826052619097,8230.6429297779086,8194.4393708374664,8171.7234122866021,8159.6555593064559,8141.6720921203541,8128.6577408672547,8127.7112425943023,8106.8882805893427,8105.4685331799137,8095.7669258821479,8070.6847216489023,8040.8700260508931,7994.728235244449,7979.1110137407295,7978.1645154677763,7941.0144582543835,7937.7017142990489,7869.0805895099793,7839.2658939119692,7838.0827710707781,7797.6199699020508,7782.9492466712836,7773.9575130782332,7754.0810493462259,7646.18024622962,7587.9706024430288,7551.5304189343506,7453.3312231155087,7331.2329459046105,6605.0321459816569,6280.1466137906446,6145.7438590313623,2944.6866999053527],"text":["Oglala Lakota College <br>Income: $30,001–$48,000","Nueta Hidatsa Sahnish College <br>Income: $30,001–$48,000","Lac Courte Oreilles Ojibwa Community College <br>Income: $30,001–$48,000","Northern Marianas College <br>Income: $30,001–$48,000","Sitting Bull College <br>Income: $30,001–$48,000","Fort Peck Community College <br>Income: $30,001–$48,000","American Samoa Community College <br>Income: $30,001–$48,000","University of Florida <br>Income: $30,001–$48,000","Haskell Indian Nations University <br>Income: $30,001–$48,000","United Tribes Technical College <br>Income: $30,001–$48,000","Chief Dull Knife College <br>Income: $30,001–$48,000","Southwestern Indian Polytechnic Institute <br>Income: $30,001–$48,000","College of Micronesia-FSM <br>Income: $30,001–$48,000","Tohono O'Odham Community College <br>Income: $30,001–$48,000","Bay Mills Community College <br>Income: $30,001–$48,000","Purdue University-Main Campus <br>Income: $30,001–$48,000","Aaniiih Nakoda College <br>Income: $30,001–$48,000","Turtle Mountain Community College <br>Income: $30,001–$48,000","Navajo Technical University <br>Income: $30,001–$48,000","Sisseton Wahpeton College <br>Income: $30,001–$48,000","Stone Child College <br>Income: $30,001–$48,000","Northwest Indian College <br>Income: $30,001–$48,000","New Mexico State University-Main Campus <br>Income: $30,001–$48,000","Cornell University <br>Income: $30,001–$48,000","Little Priest Tribal College <br>Income: $30,001–$48,000","Salish Kootenai College <br>Income: $30,001–$48,000","University of Wisconsin-Madison <br>Income: $30,001–$48,000","Cankdeska Cikana Community College <br>Income: $30,001–$48,000","Little Big Horn College <br>Income: $30,001–$48,000","Kentucky State University <br>Income: $30,001–$48,000","Blackfeet Community College <br>Income: $30,001–$48,000","University of Minnesota-Twin Cities <br>Income: $30,001–$48,000","North Carolina A & T State University <br>Income: $30,001–$48,000","University of California-Riverside <br>Income: $30,001–$48,000","University of Alaska Fairbanks <br>Income: $30,001–$48,000","University of Puerto Rico-Mayaguez <br>Income: $30,001–$48,000","University of Guam <br>Income: $30,001–$48,000","Dine College <br>Income: $30,001–$48,000","Fond du Lac Tribal and Community College <br>Income: $30,001–$48,000","Leech Lake Tribal College <br>Income: $30,001–$48,000","Tennessee State University <br>Income: $30,001–$48,000","University of California-Berkeley <br>Income: $30,001–$48,000","Ohio State University-Main Campus <br>Income: $30,001–$48,000","College of Menominee Nation <br>Income: $30,001–$48,000","North Carolina State University at Raleigh <br>Income: $30,001–$48,000","Lincoln University <br>Income: $30,001–$48,000","University of Illinois at Urbana-Champaign <br>Income: $30,001–$48,000","Iowa State University <br>Income: $30,001–$48,000","University of Arkansas at Pine Bluff <br>Income: $30,001–$48,000","University of the Virgin Islands <br>Income: $30,001–$48,000","University of Wyoming <br>Income: $30,001–$48,000","West Virginia University <br>Income: $30,001–$48,000","University of California-Davis <br>Income: $30,001–$48,000","Oklahoma State University-Main Campus <br>Income: $30,001–$48,000","Washington State University <br>Income: $30,001–$48,000","Utah State University <br>Income: $30,001–$48,000","University of Delaware <br>Income: $30,001–$48,000","University of Arizona <br>Income: $30,001–$48,000","Sinte Gleska University <br>Income: $30,001–$48,000","University of Georgia <br>Income: $30,001–$48,000","Prairie View A & M University <br>Income: $30,001–$48,000","North Dakota State University-Main Campus <br>Income: $30,001–$48,000","University of Nevada-Reno <br>Income: $30,001–$48,000","University of Idaho <br>Income: $30,001–$48,000","Delaware State University <br>Income: $30,001–$48,000","University of Maryland-College Park <br>Income: $30,001–$48,000","Langston University <br>Income: $30,001–$48,000","University of Hawaii at Manoa <br>Income: $30,001–$48,000","Louisiana State University and Agricultural & Mechanical College <br>Income: $30,001–$48,000","West Virginia State University <br>Income: $30,001–$48,000","Colorado State University-Fort Collins <br>Income: $30,001–$48,000","Texas A & M University-College Station <br>Income: $30,001–$48,000","University of Arkansas <br>Income: $30,001–$48,000","Institute of American Indian and Alaska Native Culture and Arts Development <br>Income: $30,001–$48,000","Rutgers University-New Brunswick <br>Income: $30,001–$48,000","University of Maine <br>Income: $30,001–$48,000","University of Massachusetts-Amherst <br>Income: $30,001–$48,000","Virginia Polytechnic Institute and State University <br>Income: $30,001–$48,000","Alabama A & M University <br>Income: $30,001–$48,000","University of Vermont <br>Income: $30,001–$48,000","Nebraska Indian Community College <br>Income: $30,001–$48,000","University of Nebraska-Lincoln <br>Income: $30,001–$48,000","Clemson University <br>Income: $30,001–$48,000","University of Connecticut <br>Income: $30,001–$48,000","University of Missouri-Columbia <br>Income: $30,001–$48,000","Ilisagvik College <br>Income: $30,001–$48,000","University of Kentucky <br>Income: $30,001–$48,000","Fort Valley State University <br>Income: $30,001–$48,000","Mississippi State University <br>Income: $30,001–$48,000","Michigan State University <br>Income: $30,001–$48,000","Kansas State University <br>Income: $30,001–$48,000","Florida Agricultural and Mechanical University <br>Income: $30,001–$48,000","The University of Tennessee-Knoxville <br>Income: $30,001–$48,000","Virginia State University <br>Income: $30,001–$48,000","Alcorn State University <br>Income: $30,001–$48,000","Montana State University <br>Income: $30,001–$48,000","Oregon State University <br>Income: $30,001–$48,000","White Earth Tribal and Community College <br>Income: $30,001–$48,000","University of Rhode Island <br>Income: $30,001–$48,000","University of New Hampshire-Main Campus <br>Income: $30,001–$48,000","South Dakota State University <br>Income: $30,001–$48,000","Southern University and A & M College <br>Income: $30,001–$48,000","University of the District of Columbia <br>Income: $30,001–$48,000","University of Maryland Eastern Shore <br>Income: $30,001–$48,000","Auburn University <br>Income: $30,001–$48,000","South Carolina State University <br>Income: $30,001–$48,000","Pennsylvania State University-Main Campus <br>Income: $30,001–$48,000","Tuskegee University <br>Income: $30,001–$48,000"],"type":"scatter","name":"$30,001–$48,000","marker":{"color":"rgba(252,141,98,1)","line":{"color":"rgba(252,141,98,1)"}},"textfont":{"color":"rgba(252,141,98,1)"},"error_y":{"color":"rgba(252,141,98,1)"},"error_x":{"color":"rgba(252,141,98,1)"},"line":{"color":"rgba(252,141,98,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"lines","x":[961,1410,1479,2183,2522,3689,3928,3956,4106,4360,4743,4951,5790,6561,6660,6719,6756,6877,7177,7391,7402,7601,8420,8854,9025,9472,9670,10403,10588,10639,10858,11117,11253,11551,11948,12111,12215,12281,12555,12870,12883,12892,12965,13139,13653,13750,13862,13895,13908,14230,14528,14610,14648,14667,14756,14995,15034,15041,15074,15177,15397,15399,15713,15741,15906,15995,16343,16436,16490,16499,16744,16803,16954,17149,17246,17292,17296,17473,17667,17797,17842,17880,17936,17939,18094,18218,18296,18356,18436,18583,18720,18729,19202,19382,19400,19727,19902,20124,20481,23110,23207,24045,27097,36867],"y":[11239.324314926282,11133.079883787341,11116.75278857891,10950.169092539234,10869.953363906494,10593.812492772546,10537.259220963622,10530.633733052953,10495.140047817225,10435.037407484731,10344.410197849511,10295.192287655969,10096.664274904144,9914.226732792511,9890.8009005369313,9876.8400510108804,9868.0849419860679,9839.453369229248,9768.4659987577961,9717.8283411548273,9715.2254709042063,9668.1371818248117,9474.3416604377453,9371.6465978223805,9331.1837966536514,9225.4126146511881,9178.5609501400304,9005.1151416214489,8961.3395964973861,8949.2717435172399,8897.4509630730809,8836.1651998993948,8803.9842586190025,8733.4701372840264,8639.5301836934705,8600.9603790706497,8576.3514239738797,8560.7342024701593,8495.8990707729008,8421.3623317778747,8418.2862123907798,8416.1565912766364,8398.8829977952482,8357.7103229218064,8236.0852948473839,8213.1327117282835,8186.6307600856071,8178.822149333746,8175.746029946652,8099.55291897396,8029.0387976389839,8009.6355830434532,8000.6438494504036,7996.147982653878,7975.0883960806805,7918.535124271757,7909.3067661104687,7907.650394132801,7899.8417833809417,7875.4694528524096,7823.4120478400109,7822.9387987035352,7748.6386842767488,7742.0131963660797,7702.9701426067804,7681.9105560335838,7599.5652062866993,7577.5591214405495,7564.7813947556879,7562.6517736415444,7504.678754423192,7490.7179048971393,7454.9875950931755,7408.8458042867314,7385.8932211676292,7375.0084910286732,7374.06199275572,7332.1794441775637,7286.2742779393575,7255.5130840683951,7244.8649784976769,7235.8732449046274,7222.6222690832892,7221.9123953785747,7185.2355873016568,7155.8941408401242,7137.4374245175468,7123.2399504232562,7104.3099849642022,7069.5261734331907,7037.1086075845615,7034.978986470418,6923.0555656937613,6880.4631434108906,6876.2039011826037,6798.8276673687205,6757.41836792704,6704.8877137781656,6620.4127429171385,5998.3267530189805,5975.3741698998774,5777.0827817162881,5054.9045994533826,2743.0825677664284],"text":["Sinte Gleska University <br>Income: $48,001–$75,000","Fort Peck Community College <br>Income: $48,001–$75,000","Oglala Lakota College <br>Income: $48,001–$75,000","American Samoa Community College <br>Income: $48,001–$75,000","Lac Courte Oreilles Ojibwa Community College <br>Income: $48,001–$75,000","University of Florida <br>Income: $48,001–$75,000","Sitting Bull College <br>Income: $48,001–$75,000","Northern Marianas College <br>Income: $48,001–$75,000","Haskell Indian Nations University <br>Income: $48,001–$75,000","Southwestern Indian Polytechnic Institute <br>Income: $48,001–$75,000","United Tribes Technical College <br>Income: $48,001–$75,000","College of Micronesia-FSM <br>Income: $48,001–$75,000","Chief Dull Knife College <br>Income: $48,001–$75,000","Turtle Mountain Community College <br>Income: $48,001–$75,000","Northwest Indian College <br>Income: $48,001–$75,000","Sisseton Wahpeton College <br>Income: $48,001–$75,000","Blackfeet Community College <br>Income: $48,001–$75,000","Tohono O'Odham Community College <br>Income: $48,001–$75,000","Bay Mills Community College <br>Income: $48,001–$75,000","Salish Kootenai College <br>Income: $48,001–$75,000","Little Priest Tribal College <br>Income: $48,001–$75,000","Little Big Horn College <br>Income: $48,001–$75,000","Purdue University-Main Campus <br>Income: $48,001–$75,000","Nueta Hidatsa Sahnish College <br>Income: $48,001–$75,000","Navajo Technical University <br>Income: $48,001–$75,000","Aaniiih Nakoda College <br>Income: $48,001–$75,000","New Mexico State University-Main Campus <br>Income: $48,001–$75,000","College of Menominee Nation <br>Income: $48,001–$75,000","Cankdeska Cikana Community College <br>Income: $48,001–$75,000","Dine College <br>Income: $48,001–$75,000","Lincoln University <br>Income: $48,001–$75,000","University of Guam <br>Income: $48,001–$75,000","University of Puerto Rico-Mayaguez <br>Income: $48,001–$75,000","Kentucky State University <br>Income: $48,001–$75,000","University of Alaska Fairbanks <br>Income: $48,001–$75,000","Fond du Lac Tribal and Community College <br>Income: $48,001–$75,000","University of California-Riverside <br>Income: $48,001–$75,000","North Carolina A & T State University <br>Income: $48,001–$75,000","West Virginia University <br>Income: $48,001–$75,000","Utah State University <br>Income: $48,001–$75,000","Tennessee State University <br>Income: $48,001–$75,000","University of Wyoming <br>Income: $48,001–$75,000","University of Minnesota-Twin Cities <br>Income: $48,001–$75,000","University of Delaware <br>Income: $48,001–$75,000","Cornell University <br>Income: $48,001–$75,000","University of California-Berkeley <br>Income: $48,001–$75,000","University of Arkansas at Pine Bluff <br>Income: $48,001–$75,000","University of California-Davis <br>Income: $48,001–$75,000","Iowa State University <br>Income: $48,001–$75,000","University of the Virgin Islands <br>Income: $48,001–$75,000","University of Georgia <br>Income: $48,001–$75,000","University of Wisconsin-Madison <br>Income: $48,001–$75,000","Delaware State University <br>Income: $48,001–$75,000","North Carolina State University at Raleigh <br>Income: $48,001–$75,000","University of Arizona <br>Income: $48,001–$75,000","University of Nevada-Reno <br>Income: $48,001–$75,000","University of Idaho <br>Income: $48,001–$75,000","Oklahoma State University-Main Campus <br>Income: $48,001–$75,000","Institute of American Indian and Alaska Native Culture and Arts Development <br>Income: $48,001–$75,000","Washington State University <br>Income: $48,001–$75,000","Prairie View A & M University <br>Income: $48,001–$75,000","University of Arkansas <br>Income: $48,001–$75,000","West Virginia State University <br>Income: $48,001–$75,000","North Dakota State University-Main Campus <br>Income: $48,001–$75,000","Ohio State University-Main Campus <br>Income: $48,001–$75,000","Alabama A & M University <br>Income: $48,001–$75,000","University of Missouri-Columbia <br>Income: $48,001–$75,000","University of Hawaii at Manoa <br>Income: $48,001–$75,000","University of Maine <br>Income: $48,001–$75,000","University of the District of Columbia <br>Income: $48,001–$75,000","Langston University <br>Income: $48,001–$75,000","University of Vermont <br>Income: $48,001–$75,000","University of Illinois at Urbana-Champaign <br>Income: $48,001–$75,000","University of Maryland-College Park <br>Income: $48,001–$75,000","Kansas State University <br>Income: $48,001–$75,000","Fort Valley State University <br>Income: $48,001–$75,000","University of Nebraska-Lincoln <br>Income: $48,001–$75,000","University of Massachusetts-Amherst <br>Income: $48,001–$75,000","Louisiana State University and Agricultural & Mechanical College <br>Income: $48,001–$75,000","University of Maryland Eastern Shore <br>Income: $48,001–$75,000","Nebraska Indian Community College <br>Income: $48,001–$75,000","Colorado State University-Fort Collins <br>Income: $48,001–$75,000","Virginia State University <br>Income: $48,001–$75,000","Alcorn State University <br>Income: $48,001–$75,000","Florida Agricultural and Mechanical University <br>Income: $48,001–$75,000","University of Connecticut <br>Income: $48,001–$75,000","Virginia Polytechnic Institute and State University <br>Income: $48,001–$75,000","Clemson University <br>Income: $48,001–$75,000","University of Kentucky <br>Income: $48,001–$75,000","Southern University and A & M College <br>Income: $48,001–$75,000","Texas A & M University-College Station <br>Income: $48,001–$75,000","Montana State University <br>Income: $48,001–$75,000","Mississippi State University <br>Income: $48,001–$75,000","South Dakota State University <br>Income: $48,001–$75,000","University of Rhode Island <br>Income: $48,001–$75,000","Rutgers University-New Brunswick <br>Income: $48,001–$75,000","University of New Hampshire-Main Campus <br>Income: $48,001–$75,000","Oregon State University <br>Income: $48,001–$75,000","Michigan State University <br>Income: $48,001–$75,000","Auburn University <br>Income: $48,001–$75,000","The University of Tennessee-Knoxville <br>Income: $48,001–$75,000","South Carolina State University <br>Income: $48,001–$75,000","Pennsylvania State University-Main Campus <br>Income: $48,001–$75,000","Tuskegee University <br>Income: $48,001–$75,000"],"type":"scatter","name":"$48,001–$75,000","marker":{"color":"rgba(141,160,203,1)","line":{"color":"rgba(141,160,203,1)"}},"textfont":{"color":"rgba(141,160,203,1)"},"error_y":{"color":"rgba(141,160,203,1)"},"error_x":{"color":"rgba(141,160,203,1)"},"line":{"color":"rgba(141,160,203,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"lines","x":[2587,4339,5262,7403,7550,7774,8652,8861,9234,9820,10171,11386,11434,11532,12215,12338,12926,13319,14033,14161,15366,15624,15686,15704,16012,16073,16080,16585,16898,16974,17311,17324,17655,17776,17840,18003,18263,18653,18808,18901,18908,18957,18971,19185,19364,19443,19511,19548,19558,19737,19862,19938,19965,20232,20314,20321,20369,20386,20392,20409,20513,20556,20774,20938,21130,21693,21982,22043,22474,22588,23054,23176,23429,23658,23817,24812,24824,24841,25162,25188,25443,26305,26329,26906,32589,35083],"y":[10854.572766971012,10440.006523417733,10221.602046933898,9714.9888463359694,9680.2050348049579,9627.2011315196069,9419.4447606064914,9369.9902258447128,9281.7292618918727,9143.0672649043045,9060.0120414527046,8772.5131910433247,8761.155211767893,8737.966004080552,8576.3514239738797,8547.2466020805841,8408.1113559565383,8315.1179006389357,8146.1679589168798,8115.8800141823931,7830.7474094553945,7769.6982708499454,7755.0275476191791,7750.7683053908913,7677.8879383735348,7663.4538397110064,7661.7974677333386,7542.3020607730614,7468.2385709145128,7450.255103728412,7370.5126242321467,7367.4365048450509,7289.1137727582154,7260.4822000013974,7245.3382276341536,7206.7684230113318,7145.246035269407,7052.9624536565188,7016.2856455796009,6994.2795607334519,6992.6231887557842,6981.0285849121137,6977.7158409567801,6927.0781833538113,6884.7223856391774,6866.0290447483612,6849.938574108166,6841.1834650833534,6838.8172194009721,6796.4614216863392,6766.883350656567,6748.8998834704653,6742.5110201280349,6679.3322604084424,6659.9290458129126,6658.2726738352458,6646.9146945598131,6642.8920768997641,6641.4723294903351,6637.4497118302861,6612.8407567335162,6602.6659002992747,6551.0817444233526,6512.275315232293,6466.8433981305634,6333.6237662124713,6265.2392659916395,6250.8051673291111,6148.819978418458,6121.8447776393077,6011.5777288403178,5982.709531515261,5922.843515751003,5868.6564896244608,5831.0331832745915,5595.5917378776094,5592.7522430587514,5588.7296253987015,5512.7731389942473,5506.6209002200558,5446.281635319322,5242.3112574980159,5236.6322678603001,5100.0998919868744,3755.3624706893347,3165.2207975033302],"text":["American Samoa Community College <br>Income: $75,001–$110,000","Northern Marianas College <br>Income: $75,001–$110,000","Bay Mills Community College <br>Income: $75,001–$110,000","College of Menominee Nation <br>Income: $75,001–$110,000","University of Florida <br>Income: $75,001–$110,000","Sisseton Wahpeton College <br>Income: $75,001–$110,000","Salish Kootenai College <br>Income: $75,001–$110,000","Little Big Horn College <br>Income: $75,001–$110,000","Navajo Technical University <br>Income: $75,001–$110,000","Turtle Mountain Community College <br>Income: $75,001–$110,000","Northwest Indian College <br>Income: $75,001–$110,000","University of Guam <br>Income: $75,001–$110,000","Lincoln University <br>Income: $75,001–$110,000","New Mexico State University-Main Campus <br>Income: $75,001–$110,000","Leech Lake Tribal College <br>Income: $75,001–$110,000","University of Puerto Rico-Mayaguez <br>Income: $75,001–$110,000","Fond du Lac Tribal and Community College <br>Income: $75,001–$110,000","University of Alaska Fairbanks <br>Income: $75,001–$110,000","University of Arkansas at Pine Bluff <br>Income: $75,001–$110,000","Kentucky State University <br>Income: $75,001–$110,000","West Virginia University <br>Income: $75,001–$110,000","University of the Virgin Islands <br>Income: $75,001–$110,000","North Carolina A & T State University <br>Income: $75,001–$110,000","University of Wyoming <br>Income: $75,001–$110,000","Purdue University-Main Campus <br>Income: $75,001–$110,000","Utah State University <br>Income: $75,001–$110,000","University of the District of Columbia <br>Income: $75,001–$110,000","Tennessee State University <br>Income: $75,001–$110,000","Iowa State University <br>Income: $75,001–$110,000","University of Georgia <br>Income: $75,001–$110,000","West Virginia State University <br>Income: $75,001–$110,000","North Dakota State University-Main Campus <br>Income: $75,001–$110,000","University of California-Davis <br>Income: $75,001–$110,000","University of Nevada-Reno <br>Income: $75,001–$110,000","Delaware State University <br>Income: $75,001–$110,000","University of Idaho <br>Income: $75,001–$110,000","University of Delaware <br>Income: $75,001–$110,000","University of Arkansas <br>Income: $75,001–$110,000","University of California-Riverside <br>Income: $75,001–$110,000","University of Hawaii at Manoa <br>Income: $75,001–$110,000","Prairie View A & M University <br>Income: $75,001–$110,000","Alabama A & M University <br>Income: $75,001–$110,000","University of Maine <br>Income: $75,001–$110,000","Oklahoma State University-Main Campus <br>Income: $75,001–$110,000","North Carolina State University at Raleigh <br>Income: $75,001–$110,000","Langston University <br>Income: $75,001–$110,000","Virginia State University <br>Income: $75,001–$110,000","Fort Valley State University <br>Income: $75,001–$110,000","University of Minnesota-Twin Cities <br>Income: $75,001–$110,000","Southern University and A & M College <br>Income: $75,001–$110,000","University of Arizona <br>Income: $75,001–$110,000","Kansas State University <br>Income: $75,001–$110,000","Alcorn State University <br>Income: $75,001–$110,000","University of Maryland Eastern Shore <br>Income: $75,001–$110,000","University of Missouri-Columbia <br>Income: $75,001–$110,000","Montana State University <br>Income: $75,001–$110,000","Clemson University <br>Income: $75,001–$110,000","University of Vermont <br>Income: $75,001–$110,000","Florida Agricultural and Mechanical University <br>Income: $75,001–$110,000","Louisiana State University and Agricultural & Mechanical College <br>Income: $75,001–$110,000","University of Nebraska-Lincoln <br>Income: $75,001–$110,000","Mississippi State University <br>Income: $75,001–$110,000","University of California-Berkeley <br>Income: $75,001–$110,000","South Dakota State University <br>Income: $75,001–$110,000","Ohio State University-Main Campus <br>Income: $75,001–$110,000","University of Wisconsin-Madison <br>Income: $75,001–$110,000","Washington State University <br>Income: $75,001–$110,000","University of Kentucky <br>Income: $75,001–$110,000","University of Maryland-College Park <br>Income: $75,001–$110,000","Cornell University <br>Income: $75,001–$110,000","Oregon State University <br>Income: $75,001–$110,000","University of Massachusetts-Amherst <br>Income: $75,001–$110,000","Virginia Polytechnic Institute and State University <br>Income: $75,001–$110,000","University of Rhode Island <br>Income: $75,001–$110,000","University of Illinois at Urbana-Champaign <br>Income: $75,001–$110,000","University of Connecticut <br>Income: $75,001–$110,000","The University of Tennessee-Knoxville <br>Income: $75,001–$110,000","Colorado State University-Fort Collins <br>Income: $75,001–$110,000","Michigan State University <br>Income: $75,001–$110,000","Texas A & M University-College Station <br>Income: $75,001–$110,000","University of New Hampshire-Main Campus <br>Income: $75,001–$110,000","Rutgers University-New Brunswick <br>Income: $75,001–$110,000","Auburn University <br>Income: $75,001–$110,000","South Carolina State University <br>Income: $75,001–$110,000","Pennsylvania State University-Main Campus <br>Income: $75,001–$110,000","Tuskegee University <br>Income: $75,001–$110,000"],"type":"scatter","name":"$75,001–$110,000","marker":{"color":"rgba(231,138,195,1)","line":{"color":"rgba(231,138,195,1)"}},"textfont":{"color":"rgba(231,138,195,1)"},"error_y":{"color":"rgba(231,138,195,1)"},"error_x":{"color":"rgba(231,138,195,1)"},"line":{"color":"rgba(231,138,195,1)"},"xaxis":"x","yaxis":"y","frame":null},{"mode":"lines","x":[650,7403,11943,12119,13969,14302,14338,15378,15466,15834,15897,16256,16308,16513,16746,16913,16953,17093,17140,17397,18180,18236,18401,18486,18865,19168,19346,20335,20464,20479,20546,20633,20650,20730,20805,20831,20849,21019,21052,21105,21208,21235,21321,21996,22149,22244,22995,23362,23592,23601,23912,23918,24066,24339,24517,24720,25164,25260,25516,26049,26099,26133,26916,27210,27395,27686,27742,27948,27989,28187,29644,30156,31177,34890,47089],"y":[11312.914555648355,9714.9888463359694,8640.7133065346625,8599.0673825247432,8161.3119312841227,8082.5159500608115,8073.9974656042368,7827.9079146365366,7807.0849526315778,7720.0071115199298,7705.0997637209248,7620.1515437234202,7607.8470661750353,7559.339029686209,7504.2055052867154,7464.6892023909404,7455.2242196614134,7422.0967801080697,7410.9754254008749,7350.1629113636645,7164.8858744331746,7151.6348986118373,7112.591844852539,7092.4787565522938,7002.7980451900257,6931.1008010138594,6888.9816278674643,6654.9599298799112,6624.4353605771867,6620.8859920536142,6605.0321459816569,6584.4458085449351,6580.4231908848869,6561.4932254258329,6543.7463828079699,6537.5941440337774,6533.3349018054905,6493.1087252050002,6485.3001144531408,6472.7590123365171,6448.386681807986,6441.9978184655556,6421.6481055970717,6261.9265220363059,6225.7229630958645,6203.2436291132381,6025.5385783663696,5938.6973618229604,5884.2737111281804,5882.1440900140369,5808.553849291965,5807.134101882536,5772.1136657832867,5707.5151586542652,5665.3959855078701,5617.3611981555205,5512.2998898577716,5489.5839313069073,5429.0080418379348,5302.8871469669884,5291.0559185550792,5283.010683234982,5097.7336463044921,5028.1660232424692,4984.3904781184074,4915.532728761098,4902.2817529397607,4853.5370918826975,4843.8354845849317,4796.983820073774,4452.2218241507553,4331.0700452128103,4089.4763610416358,3210.8893391732972,324.30623123582336],"text":["American Samoa Community College <br>Income: $110,001 or more","College of Menominee Nation <br>Income: $110,001 or more","Lincoln University <br>Income: $110,001 or more","New Mexico State University-Main Campus <br>Income: $110,001 or more","University of Florida <br>Income: $110,001 or more","University of Puerto Rico-Mayaguez <br>Income: $110,001 or more","Fond du Lac Tribal and Community College <br>Income: $110,001 or more","University of Alaska Fairbanks <br>Income: $110,001 or more","Langston University <br>Income: $110,001 or more","University of Wyoming <br>Income: $110,001 or more","University of Arkansas at Pine Bluff <br>Income: $110,001 or more","Kentucky State University <br>Income: $110,001 or more","West Virginia University <br>Income: $110,001 or more","North Carolina A & T State University <br>Income: $110,001 or more","Utah State University <br>Income: $110,001 or more","University of the Virgin Islands <br>Income: $110,001 or more","Tennessee State University <br>Income: $110,001 or more","University of Georgia <br>Income: $110,001 or more","Alabama A & M University <br>Income: $110,001 or more","West Virginia State University <br>Income: $110,001 or more","Delaware State University <br>Income: $110,001 or more","University of Nevada-Reno <br>Income: $110,001 or more","North Dakota State University-Main Campus <br>Income: $110,001 or more","Iowa State University <br>Income: $110,001 or more","University of Idaho <br>Income: $110,001 or more","Fort Valley State University <br>Income: $110,001 or more","University of Arkansas <br>Income: $110,001 or more","University of Hawaii at Manoa <br>Income: $110,001 or more","Montana State University <br>Income: $110,001 or more","University of Maine <br>Income: $110,001 or more","Purdue University-Main Campus <br>Income: $110,001 or more","University of the District of Columbia <br>Income: $110,001 or more","Southern University and A & M College <br>Income: $110,001 or more","Louisiana State University and Agricultural & Mechanical College <br>Income: $110,001 or more","Prairie View A & M University <br>Income: $110,001 or more","Oklahoma State University-Main Campus <br>Income: $110,001 or more","Mississippi State University <br>Income: $110,001 or more","Florida Agricultural and Mechanical University <br>Income: $110,001 or more","Clemson University <br>Income: $110,001 or more","South Dakota State University <br>Income: $110,001 or more","University of Arizona <br>Income: $110,001 or more","Kansas State University <br>Income: $110,001 or more","Virginia State University <br>Income: $110,001 or more","Alcorn State University <br>Income: $110,001 or more","University of Nebraska-Lincoln <br>Income: $110,001 or more","North Carolina State University at Raleigh <br>Income: $110,001 or more","University of Delaware <br>Income: $110,001 or more","University of Maryland Eastern Shore <br>Income: $110,001 or more","University of Missouri-Columbia <br>Income: $110,001 or more","Washington State University <br>Income: $110,001 or more","Oregon State University <br>Income: $110,001 or more","Ohio State University-Main Campus <br>Income: $110,001 or more","University of Kentucky <br>Income: $110,001 or more","University of Maryland-College Park <br>Income: $110,001 or more","University of Wisconsin-Madison <br>Income: $110,001 or more","University of Minnesota-Twin Cities <br>Income: $110,001 or more","The University of Tennessee-Knoxville <br>Income: $110,001 or more","South Carolina State University <br>Income: $110,001 or more","Virginia Polytechnic Institute and State University <br>Income: $110,001 or more","Colorado State University-Fort Collins <br>Income: $110,001 or more","University of Rhode Island <br>Income: $110,001 or more","University of Vermont <br>Income: $110,001 or more","Texas A & M University-College Station <br>Income: $110,001 or more","Michigan State University <br>Income: $110,001 or more","Auburn University <br>Income: $110,001 or more","University of Massachusetts-Amherst <br>Income: $110,001 or more","University of Connecticut <br>Income: $110,001 or more","University of California-Riverside <br>Income: $110,001 or more","University of Illinois at Urbana-Champaign <br>Income: $110,001 or more","Rutgers University-New Brunswick <br>Income: $110,001 or more","University of New Hampshire-Main Campus <br>Income: $110,001 or more","University of California-Davis <br>Income: $110,001 or more","University of California-Berkeley <br>Income: $110,001 or more","Pennsylvania State University-Main Campus <br>Income: $110,001 or more","Cornell University <br>Income: $110,001 or more"],"type":"scatter","name":"$110,001 or more","marker":{"color":"rgba(166,216,84,1)","line":{"color":"rgba(166,216,84,1)"}},"textfont":{"color":"rgba(166,216,84,1)"},"error_y":{"color":"rgba(166,216,84,1)"},"error_x":{"color":"rgba(166,216,84,1)"},"line":{"color":"rgba(166,216,84,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

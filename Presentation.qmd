@@ -1,0 +1,138 @@
+---
+title: "Curated & Reproducible Reports"
+subtitle: "Empowering Institutional Research"
+author: 
+  - name: Andrew Westbrook
+    email: awestbrook@uga.edu
+title-slide-attributes: 
+  data-background-image: /files/slidebg.jpg
+  data-background-size: contain
+format:
+  revealjs: 
+    center: false
+include-in-header:
+  - text: |
+      <style>
+      #title-slide .title {
+        font-size: 1.75em;
+        color: #BA0C2F;
+      }
+      </style>
+---
+
+## Agenda {.smaller background-image="/files/slidebg.jpg" background-size="contain"}
+
+-   Issues IR staff face with B.I.
+-   Potential Solution
+-   Live Demo
+-   UGA use cases
+-   Other potential use cases
+-   Future possibilities
+-   Q&A
+
+## About Me
+
+## Problems with "Big B.I." {background-image="/files/slidebg.jpg" background-size="contain"}
+
+Let's discuss some pain points when using classic B.I. tools
+
+## Including Context {background-image="/files/slidebg.jpg" background-size="contain"}
+
+![](files/busydash.png){fig-align="center" width="593"}
+
+::: notes
+Sometimes busy dashboards have the customers asking "what am I looking at?"
+
+Classic B.I. tools are not designed to create narratives or assist in data literacy efforts
+:::
+
+##  {background-image="/files/slidebg.jpg" background-size="contain"}
+
+::: columns
+::: {.column width="40%"}
+### Data Prep
+
+-   Are you pulling data from multiple sources?
+
+-   Are you doing data prep in R, Python, Julia, etc.?
+
+-   Are you doing complex statistical work?
+:::
+
+::: {.column width="10%"}
+:::
+
+::: {.column width="50%"}
+### Public Dashboards
+
+-   Many B.I. tools have limitations when publishing to their public service
+:::
+:::
+
+## Copy/Paste Cycle {background-image="/files/slidebg.jpg" background-size="contain"}
+
+![](files/copycycle.png){fig-align="center" width="680" height="345"}
+
+## Potential Solution! {.smaller background-image="/files/slidebg.jpg" background-size="contain"}
+
+-   Quarto is a *new* markdown platform that natively works in R, Python, Julia, and Observable. It blends scripts, output, and word processing to create beautiful documents, pdfs, presentations, and interactive HTML files
+-   Since R/Python etc. are open source, there are very few limitations (and they are FREE!)
+-   Downside is that the learning curve quickly steepens with additional complexities
+    -   Security, scheduling, etc.
+
+##  {.smaller background-image="/files/slidebg.jpg" background-size="contain"}
+
+Quarto takes code and (and text) and creates output locally
+
+```{r}
+#| echo: true
+#| output-location: column-fragment
+# Libraries
+library(visNetwork)
+
+nodes <- jsonlite::fromJSON("https://raw.githubusercontent.com/datastorm-open/datastorm-open.github.io/master/visNetwork/data/nodes_miserables.json")
+
+edges <- jsonlite::fromJSON("https://raw.githubusercontent.com/datastorm-open/datastorm-open.github.io/master/visNetwork/data/edges_miserables.json")
+
+
+visNetwork(nodes, edges, height = "300px", width = "100%") %>%
+  visOptions(selectedBy = "group", 
+             highlightNearest = TRUE, 
+             nodesIdSelection = TRUE) %>%
+  visPhysics(stabilization = FALSE)
+```
+
+## Live Demo {.smaller background-image="/files/slidebg.jpg" background-size="contain"}
+
+Using IPEDS data to display financial aid data and net price at specific institutions.
+
+## UGA use case {background-image="/files/slidebg.jpg" background-size="contain"}
+
+[Law School Admissions Report](/files/Report.html)
+
+## Back to reality {background-image="/files/slidebg.jpg" background-size="contain"}
+
+-   Quarto will *not* replace your enterprise B.I. tools
+
+-   It will work for some niche projects
+
+    -   Document creation, parameterization, reproducible
+    -   Complex math
+    -   nasty data prep
+    -   cool visualizations
+
+## Future Considerations {.smaller background-image="/files/slidebg.jpg" background-size="contain"}
+
+Because Quarto and R are open source, users are making more flexible applications
+
+Serverless deployment:
+
+-   [webR](https://quarto-webr.thecoatlessprofessor.com/)
+
+-   [Shinylive](https://holtzy.github.io/quarto-tricks/shiny-live/)
+
+-   [quarto-live](https://r-wasm.github.io/quarto-live/#quarto-live)
+
+## Q&A {background-image="/files/slidebg.jpg" background-size="contain"}
+
+![](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNW91Ym5ud3VkbHFrNjlub2N1bzM2cnlzZjl4aWk5NGkydjE1bWpkayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Zcd3N14vCmr81iEbzi/giphy.gif){fig-align="center" width="400" height="390"}
