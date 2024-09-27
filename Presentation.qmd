@@ -32,6 +32,34 @@ include-in-header:
 
 ## About Me
 
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+
+df <- data.frame(task=c("IR","Tableau","SAS","R","Power BI"),
+                 start=c("2016-12-16","2016-12-16","2016-12-16","2020-3-15","2024-1-1"),
+                 end=c("2024-9-30","2024-1-1","2020-4-30","2024-9-30","2024-9-30"),
+                 skill=c("IR","Tableau","SAS","R","Power BI"))
+
+df <- df %>% 
+  mutate(start = as.Date(start), end = as.Date(end))
+
+df_tidy <- df %>% 
+  gather(key=date_type, value=date, -task, -skill)
+
+ggplot() +
+  geom_line(data=df_tidy, mapping=aes(x=fct_rev(fct_inorder(task)), y=date, color=skill), size=10) +
+  coord_flip() +
+  theme_minimal() +
+  theme(axis.title.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.title = element_blank()) +
+  scale_color_manual(values=c(
+    "#004E60", "#B4BD00", "#66435A","#BA0C2F","#9EA2A2"))
+```
+
+
 ## Problems with "Big B.I." {background-image="/files/slidebg.jpg" background-size="contain"}
 
 Let's discuss some pain points when using classic B.I. tools
