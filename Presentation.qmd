@@ -135,4 +135,15 @@ Serverless deployment:
 
 ## Q&A {background-image="/files/slidebg.jpg" background-size="contain"}
 
-![](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNW91Ym5ud3VkbHFrNjlub2N1bzM2cnlzZjl4aWk5NGkydjE1bWpkayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Zcd3N14vCmr81iEbzi/giphy.gif){fig-align="center" width="400" height="390"}
+::: columns
+::: {.column width="50%"}
+All files available here:
+
+![](files/qrcode.png){fig-align="left" width="350" height="350"}
+:::
+
+::: {.column width="50%"}
+![](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNW91Ym5ud3VkbHFrNjlub2N1bzM2cnlzZjl4aWk5NGkydjE1bWpkayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Zcd3N14vCmr81iEbzi/giphy.gif){fig-align="right" width="400" height="390"}
+
+:::
+:::
