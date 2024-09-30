@@ -1,0 +1,46 @@
+---
+title: "ggplot2 demo"
+author: "Andrew"
+date: "9/30/2024"
+format: html
+---
+
+## IPEDS
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. In rutrum, purus non pulvinar feugiat, erat nisl efficitur magna, pharetra congue metus mi ut lectus. Proin auctor est vel est facilisis, et consequat sem varius. Cras dignissim ultricies velit, id porttitor augue sagittis non. Quisque rhoncus, sapien eu commodo fringilla, est augue pellentesque lectus, ornare finibus mauris ex quis lectus. Donec interdum in mi ut luctus. Fusce luctus auctor tincidunt. Vivamus posuere arcu in erat dignissim viverra. Nulla pellentesque urna in arcu semper lobortis.
+
+Nam tristique eros vel venenatis mattis. Nullam in ultrices neque, id dapibus sem. Vivamus non facilisis purus. Quisque venenatis, velit elementum efficitur sollicitudin, dolor lacus placerat mi, quis ullamcorper dolor odio id purus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ornare est magna, et cursus ante gravida eget. Sed lorem massa, luctus id facilisis et, auctor non nibh. Morbi quis metus mi. In vitae volutpat ex. Donec auctor blandit elit, quis scelerisque purus ornare vitae. Maecenas maximus felis nec efficitur cursus. Vivamus a tortor scelerisque lorem sodales tincidunt. Praesent tortor mauris, accumsan et est ac, commodo vulputate ipsum. Vivamus in dui vel lectus semper feugiat ut vitae felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aenean interdum velit et ipsum tempus sagittis.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+#| warning: false
+
+library(educationdata)
+library(ggplot2)
+library(dplyr)
+sfa <- get_education_data(level = "college-university",
+    source = "ipeds",
+    topic = "sfa-grants-and-net-price",
+    filters = list(year = 2017, unitid = 139959)) %>% 
+  select(unitid, year, type_of_aid, income_level,
+         average_grant, total_grant, net_price, 
+         number_of_students, number_receiving_grants) %>% 
+  filter(type_of_aid==9,income_level != 99) %>%
+  arrange(income_level) %>%
+  mutate(income_level_desc = case_when(
+    income_level == 1 ~ 'Less than $30,000',
+    income_level == 2 ~ '$30,001–$48,000',
+    income_level == 3 ~ '$48,001–$75,000',
+    income_level == 4 ~ '$75,001–$110,000',
+    income_level == 5 ~ '$110,001 or more'))
+
+ggplot(data=(sfa %>%  
+  mutate(income_level_desc=factor(income_level_desc,
+                                  levels=income_level_desc))), 
+       aes(y=income_level_desc, x=average_grant)) + 
+  geom_bar(
+  stat="identity",
+  color="blue",
+  fill=rgb(0.1,0.4,0.5,0.7) 
+)
+
+```

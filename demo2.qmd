@@ -6,7 +6,7 @@ params:
   school: 110644 #	110644     139959
 ---
 
-This demo uses IPEDS data pulled from the Urban Institute API (https://educationdata.urban.org/documentation/colleges.html#overview). We will pull IPEDS directory and financial aid data sets and create plots based on a few fields.
+This demo uses IPEDS data pulled from the Urban Institute API (). We will pull IPEDS directory and financial aid data sets and create plots based on a few fields.
 The data include land-grant universities.
 
 ## Load Libraries
@@ -105,6 +105,9 @@ ggplot(fin_aid, aes(x = average_grant, color = income_level_desc, fill = income_
 
 This section displays the 'same' plot but using different packages. One plot is interactive while the other is static.  Interactive plots can be more difficult to format.
 
+::: columns
+
+::: {.column width="50%"}
 ```{r static, echo=FALSE, message=FALSE, warning=FALSE}
 fin_aid2 <- left_join(sfa,directory, by="unitid") %>%
   filter(number_of_students != 0, income_level != 99) %>%
@@ -143,7 +146,9 @@ scat <- ggplot(fin_aid2, aes(x=net_price, y=average_grant, color=income_level_de
 
 scat
 ```
+:::
 
+::: {.column width="50%"}
 ```{r interactive, echo=FALSE, message=FALSE, warning=FALSE}
 fl <- lm(average_grant ~ net_price, data=fin_aid2)
 
@@ -155,9 +160,11 @@ fig <- plot_ly(data=fin_aid2,
                color=~income_level_desc,
                text=~paste(inst_name,"<br>Income:",income_level_desc)) %>%
   add_lines(x = ~net_price, y=fitted(fl)) %>%
-  layout(showlegend = T)
+  layout(showlegend = F)
 fig
 ```
+:::
+:::
 
 ## Let's try parameters
 

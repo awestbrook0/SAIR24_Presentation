@@ -13,7 +13,7 @@ The data include land-grant universities.
 
 In this section I am going to show the code block, but notice I am hiding messages and warning. This will produce no output
 
-```{r, warning=FALSE, message=FALSE}
+```{r libs, message=FALSE, warning=FALSE}
 library(educationdata)
 library(tidyverse)
 library(plotly)
@@ -54,11 +54,12 @@ sfa <- get_education_data(level = "college-university",
 
 ## Making a simple plot
 
-In this section I am doing data manipulation and creating a plot. I will hide the code block on the output by adding `echo=FALSE`.  Let's try moving the figure to the margin by adding `#| column: margin`
+In this section I am doing data manipulation and creating a plot. I will hide the code block on the output by adding `echo=FALSE`.  Let's try moving the figure to the margin by adding `#| column: margin`.
 
 Density plots are difficult to make in B.I. tools, but `{ggridges}` and `geom_density()` make it easy to do in R.
 
 ```{r plot, echo=FALSE, message=FALSE, warning=FALSE}
+
 fin_aid <- left_join(sfa,directory, by="unitid") %>%
   filter(number_of_students != 0)
 
@@ -104,6 +105,7 @@ ggplot(fin_aid, aes(x = average_grant, color = income_level_desc, fill = income_
 ## Interactive plots in HTML Files
 
 This section displays the 'same' plot but using different packages. One plot is interactive while the other is static.  Interactive plots can be more difficult to format.
+
 
 ```{r static, echo=FALSE, message=FALSE, warning=FALSE}
 fin_aid2 <- left_join(sfa,directory, by="unitid") %>%
@@ -158,6 +160,7 @@ fig <- plot_ly(data=fin_aid2,
   layout(showlegend = T)
 fig
 ```
+
 
 ## Let's try parameters
 
